@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
-    private OnPosterClickListener onPosterClickListener;
+    private OnClickListener onClickListener;
     Context context;
 
     List<Product> products;
@@ -40,13 +40,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         return new ProductViewHolder(view);
     }
 
-    public interface OnPosterClickListener {
-
-        void onPosterClick(int position);
+    public interface OnClickListener {
+        void onClick(int position);
     }
 
-    public void setOnPosterClickListener(OnPosterClickListener onPosterClickListener) {
-        this.onPosterClickListener = onPosterClickListener;
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
     }
 
     @Override
@@ -75,8 +74,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             textViewPrice = itemView.findViewById(R.id.textViewPrice);
             textViewPresence = itemView.findViewById(R.id.textViewPresence);
             itemView.setOnClickListener(v -> {
-                if (onPosterClickListener != null) {
-                    onPosterClickListener.onPosterClick(getAdapterPosition());
+                System.out.println("click");
+                if (onClickListener != null) {
+                    System.out.println("click2");
+                    onClickListener.onClick(getAdapterPosition());
                 }
             });
         }

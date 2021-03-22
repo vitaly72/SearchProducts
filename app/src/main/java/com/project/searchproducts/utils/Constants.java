@@ -2,7 +2,7 @@ package com.project.searchproducts.utils;
 
 public final class Constants {
     public static final class BASE {
-        public static final String URL = "https://prom.ua/ua/";
+        public static final String URL = "https://prom.ua/";
     }
 
     public static final class PARAMS {

@@ -6,13 +6,16 @@ public class Product {
     String price;
     int sale;
     String presence;
+    String detailsLink;
 
-    public Product(String title, String imageUrl, String price, int sale, String inStock) {
+    public Product(String title, String imageUrl, String price,
+                   int sale, String presence, String detailsLink) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.price = price;
         this.sale = sale;
-        this.presence = inStock;
+        this.presence = presence;
+        this.detailsLink = detailsLink;
     }
 
     public String getTitle() {
@@ -33,5 +36,9 @@ public class Product {
 
     public String getPresence() {
         return presence;
+    }
+
+    public String getDetailsLink() {
+        return detailsLink;
     }
 }

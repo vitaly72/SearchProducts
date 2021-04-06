@@ -3,38 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-<!--    <data>-->
-<!--    </data>-->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/powder_blue"
         tools:context=".screens.DetailsActivity">
-
-<!--        <com.smarteist.autoimageslider.SliderView-->
-<!--            android:id="@+id/imageSlider"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="350dp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            android:layout_marginHorizontal="25dp"-->
-<!--            android:layout_marginTop="25dp"-->
-<!--            android:background="@drawable/product_image_background"-->
-<!--            app:sliderAnimationDuration="600"-->
-<!--            app:sliderAutoCycleDirection="back_and_forth"-->
-<!--            app:sliderAutoCycleEnabled="true"-->
-<!--            app:sliderIndicatorAnimationDuration="600"-->
-<!--            app:sliderIndicatorGravity="center_horizontal|bottom"-->
-<!--            app:sliderIndicatorMargin="15dp"-->
-<!--            app:sliderIndicatorOrientation="horizontal"-->
-<!--            app:sliderIndicatorPadding="3dp"-->
-<!--            app:sliderIndicatorRadius="2dp"-->
-<!--            app:sliderIndicatorSelectedColor="#5A5A5A"-->
-<!--            app:sliderIndicatorUnselectedColor="#FFF"-->
-<!--            app:sliderScrollTimeInSec="3"-->
-<!--            app:sliderStartAutoCycle="true" />-->
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
@@ -48,16 +21,39 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+            android:id="@+id/textViewName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
+            android:layout_marginHorizontal="25dp"
             android:layout_marginTop="25dp"
-            android:text="@string/app_name"
-            android:textSize="14sp"
+            android:text="@string/name"
             android:textColor="@color/honeydew"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/viewPager"
             tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/textViewPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="25dp"
+            android:text="@string/price"
+            android:textColor="@color/prussian_blue"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
+
+        <TextView
+            android:id="@+id/textViewCharacteristics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="25dp"
+            android:textColor="@color/honeydew"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPrice" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

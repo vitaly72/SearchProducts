@@ -42,11 +42,11 @@ public class SearchActivity extends AppCompatActivity {
         productsViewModel.search("JBL");
         productsViewModel.getProductsData().observe(this, productAdapter::setProducts);
 
-        productAdapter.setOnClickListener(position -> {
+        productAdapter.setOnClickListener(product -> {
             Intent intent = new Intent(SearchActivity.this, DetailsActivity.class);
-            Product product = productAdapter.getProducts().get(position);
             String movieJsonString = JSONUtils.getGsonParser().toJson(product);
             intent.putExtra("product", movieJsonString);
+            System.out.println("movieJsonString = " + movieJsonString);
 
             startActivity(intent);
         });

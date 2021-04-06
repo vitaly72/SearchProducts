@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.ProductDetails;
+import com.project.searchproducts.utils.Constants.*;
+import com.project.searchproducts.utils.Constants.ATTRIBUTES.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
@@ -13,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -43,26 +46,27 @@ public final class NetworkRepository {
                         if (response.isSuccessful() && response.body() != null) {
                             List<Product> products = new ArrayList<>();
                             Document document = Jsoup.parse(response.body());
-                            Elements titles = document.getElementsByClass("ek-text ek-text_color_black-800 ek-text_wrap_two-line");
-                            Elements links = document.getElementsByClass("productTile__tileLink--204An");
-                            Elements prices = document.getElementsByAttributeValue("data-qaid", "product_price");
-                            Elements presences = document.getElementsByAttributeValue("data-qaid", "product_presence");
-                            Elements images = document.getElementsByClass("lazyImage__image--APkHl");
+                            Elements titles = document.getElementsByClass(CLASSES.TITLES);
+                            Elements links = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_LINK);
+                            Elements prices = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRICE);
+                            Elements presences = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRESENCE);
+                            Elements images = document.getElementsByClass(CLASSES.IMAGES);
 
                             System.out.println("titles = " + titles.size());
                             System.out.println("prices = " + prices.size());
                             System.out.println("presences = " + presences.size());
                             System.out.println("images = " + images.size());
+                            System.out.println("links = " + links.size());
 
                             for (int i = 0; i < titles.size(); i++) {
 //                                System.out.println("title = " + title);
-//                                System.out.println("link = " + Constants.BASE.URL + links.get(i).attr("href").replace("/ua/", ""));
+//                                System.out.println("link = " + BASE.URL + links.get(i).attr("href").replace("/ua/", ""));
                                 Product product = new Product(titles.get(i).text(),
                                         images.get(i).absUrl("src"),
                                         prices.get(i).attr("data-qaprice") + " грн.",
                                         0,
                                         presences.get(i).text(),
-                                        links.get(i).attr("href"));
+                                        links.get(i * 2).attr("href"));
                                 products.add(product);
                             }
                             System.out.println("products = " + products.size());
@@ -90,14 +94,31 @@ public final class NetworkRepository {
                     public void onResponse(@NotNull Call<String> call, @NotNull Response<String> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             Document document = Jsoup.parse(response.body());
-                            Elements imageLinks = document.getElementsByAttributeValue("data-qaid", "image_thumb");
+                            Elements imageLinks = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.IMAGES_LINKS);
+                            Elements characteristicName = document.getElementsByClass(CLASSES.CHARACTERISTIC_NAME);
+                            Elements characteristicValue = document.getElementsByClass(CLASSES.CHARACTERISTIC_VALUE);
+
                             System.out.println("imageLinks.size() = " + imageLinks.size());
                             List<String> links = new ArrayList<>();
+                            HashMap<String, String> characteristic = new HashMap<>();
+
+                            System.out.println("characteristicName = " + characteristicName.size());
+                            System.out.println("characteristicValue = " + characteristicValue.size());
+
                             for (Element element : imageLinks) {
                                 links.add(element.attr("src"));
-                                System.out.println("link: " + element.attr("src"));
+//                                System.out.println("link: " + element.attr("src"));
                             }
-                            data.setValue(new ProductDetails(product, links));
+
+                            for (int i = 0; i < characteristicName.size(); i++) {
+                                System.out.println("characteristicName.get(i) = " + characteristicName.get(i).text());
+                                System.out.println("characteristicName.get(i) = " + characteristicValue.get(i).text());
+                                characteristic.put(
+                                        characteristicName.get(i).text(),
+                                        characteristicValue.get(i).text());
+                            }
+                            ProductDetails productDetails = new ProductDetails(product, links, characteristic);
+                            data.setValue(productDetails);
                         }
                     }
 

@@ -1,16 +1,17 @@
 package com.project.searchproducts.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.project.searchproducts.R;
+import com.project.searchproducts.BR;
+import com.project.searchproducts.databinding.ProductItemBinding;
 import com.project.searchproducts.models.Product;
 import com.squareup.picasso.Picasso;
 
@@ -18,15 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
-    private OnClickListener onClickListener;
-    Context context;
-
-    List<Product> products;
-
-    public ProductAdapter(Context context, List<Product> ProductList) {
-        this.context = context;
-        this.products = ProductList;
-    }
+    private IOnClickListener onClickListener;
+    private List<Product> products;
 
     public ProductAdapter() {
         products = new ArrayList<>();
@@ -35,53 +29,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.product_item, parent, false);
-        return new ProductViewHolder(view);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        ProductItemBinding productItemBinding = ProductItemBinding.inflate(layoutInflater);
+        return new ProductViewHolder(productItemBinding.getRoot());
     }
 
-    public interface OnClickListener {
-        void onClick(int position);
-    }
-
-    public void setOnClickListener(OnClickListener onClickListener) {
+    public void setOnClickListener(IOnClickListener onClickListener) {
         this.onClickListener = onClickListener;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        holder.textViewTitle.setText(products.get(position).getTitle());
-        holder.textViewPrice.setText(products.get(position).getPrice());
-        holder.textViewPresence.setText(products.get(position).getPresence());
-        Picasso.get().load(products.get(position).getImageUrl()).into(holder.imageViewSmallPoster);
+        assert holder.productItemBinding != null;
+        holder.bind(products.get(position));
     }
 
     @Override
     public int getItemCount() {
         return products == null ? 0 : products.size();
-    }
-
-    public class ProductViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView imageViewSmallPoster;
-        private final TextView textViewTitle;
-        private final TextView textViewPrice;
-        private final TextView textViewPresence;
-
-        public ProductViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imageViewSmallPoster = itemView.findViewById(R.id.imageViewProduct);
-            textViewTitle = itemView.findViewById(R.id.textViewTitle);
-            textViewPrice = itemView.findViewById(R.id.textViewPrice);
-            textViewPresence = itemView.findViewById(R.id.textViewPresence);
-            itemView.setOnClickListener(v -> {
-                System.out.println("click");
-                if (onClickListener != null) {
-                    System.out.println("click2");
-                    onClickListener.onClick(getAdapterPosition());
-                }
-            });
-        }
-
     }
 
     public List<Product> getProducts() {
@@ -92,18 +57,34 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.products = products;
         notifyDataSetChanged();
     }
-//    public void setProducts(List<Product> Products) {
-//        this.Products = Products;
-//        notifyDataSetChanged();
-//    }
+
+    public class ProductViewHolder extends RecyclerView.ViewHolder {
+        private final ProductItemBinding productItemBinding;
+
+        public ProductViewHolder(@NonNull View itemView) {
+            super(itemView);
+            productItemBinding = DataBindingUtil.bind(itemView);
+            itemView.setOnClickListener(v -> {
+                if (onClickListener != null && productItemBinding != null) {
+                    onClickListener.onClick(productItemBinding.getProduct());
+                }
+            });
+        }
+
+        public void bind(Product product) {
+            productItemBinding.setProduct(product);
+            productItemBinding.executePendingBindings();
+        }
+    }
+
+    @BindingAdapter("bind:imageUrl")
+    public static void loadImage(ImageView imageView, String url) {
+        Picasso.get().load(url).into(imageView);
+    }
 //
 //    public void addProducts(List<Product> Products) {
 //        this.Products.addAll(Products);
 //        notifyDataSetChanged();
-//    }
-//
-//    public List<Product> getProducts() {
-//        return Products;
 //    }
 //
 //    public void clear() {

@@ -1,12 +1,13 @@
 package com.project.searchproducts.network;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.ProductDetails;
-import com.project.searchproducts.utils.Constants.*;
-import com.project.searchproducts.utils.Constants.ATTRIBUTES.*;
+import com.project.searchproducts.models.SeoLinks;
+import com.project.searchproducts.utils.Constants.ATTRIBUTES.KEYS;
+import com.project.searchproducts.utils.Constants.ATTRIBUTES.VALUES;
+import com.project.searchproducts.utils.Constants.CLASSES;
 
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
@@ -24,7 +25,6 @@ import retrofit2.Response;
 
 public final class NetworkRepository {
     private static NetworkRepository instance;
-    private LiveData<List<Product>> productList;
 
     private NetworkRepository() {
     }
@@ -44,33 +44,7 @@ public final class NetworkRepository {
                     public void onResponse(@NotNull Call<String> call,
                                            @NotNull Response<String> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            List<Product> products = new ArrayList<>();
-                            Document document = Jsoup.parse(response.body());
-                            Elements titles = document.getElementsByClass(CLASSES.TITLES);
-                            Elements links = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_LINK);
-                            Elements prices = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRICE);
-                            Elements presences = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRESENCE);
-                            Elements images = document.getElementsByClass(CLASSES.IMAGES);
-
-                            System.out.println("titles = " + titles.size());
-                            System.out.println("prices = " + prices.size());
-                            System.out.println("presences = " + presences.size());
-                            System.out.println("images = " + images.size());
-                            System.out.println("links = " + links.size());
-
-                            for (int i = 0; i < titles.size(); i++) {
-//                                System.out.println("title = " + title);
-//                                System.out.println("link = " + BASE.URL + links.get(i).attr("href").replace("/ua/", ""));
-                                Product product = new Product(titles.get(i).text(),
-                                        images.get(i).absUrl("src"),
-                                        prices.get(i).attr("data-qaprice") + " грн.",
-                                        0,
-                                        presences.get(i).text(),
-                                        links.get(i * 2).attr("href"));
-                                products.add(product);
-                            }
-                            System.out.println("products = " + products.size());
-                            data.setValue(products);
+                            data.setValue(parseProducts(response.body()));
                         }
                     }
 
@@ -80,6 +54,31 @@ public final class NetworkRepository {
                         data.setValue(null);
                     }
                 });
+        return data;
+    }
+
+    public MutableLiveData<List<Product>> searchProductByTag(String tag) {
+        MutableLiveData<List<Product>> data = new MutableLiveData<>();
+        String tagLink = tag.replace("ua/", "");
+
+        NetworkService.createService()
+                .searchByTag(tagLink)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(@NotNull Call<String> call,
+                                           @NotNull Response<String> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            data.setValue(parseProducts(response.body()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call<String> call,
+                                          @NotNull Throwable throwable) {
+                        data.setValue(null);
+                    }
+                });
+
         return data;
     }
 
@@ -131,7 +130,42 @@ public final class NetworkRepository {
         return data;
     }
 
-    public LiveData<List<Product>> getProductList() {
-        return productList;
+    private List<Product> parseProducts(String response) {
+        List<Product> products = new ArrayList<>();
+        Document document = Jsoup.parse(response);
+        Elements tags = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.SEO_LINKS);
+        System.out.println("tags = " + tags.size());
+        List<SeoLinks> seoLinks = new ArrayList<>();
+        for (Element item : tags) {
+            System.out.println("tags: " + item.text() + " " + item.attr("href"));
+            seoLinks.add(new SeoLinks(item.text(), item.attr("href")));
+        }
+        Elements titles = document.getElementsByClass(CLASSES.TITLES);
+        Elements links = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_LINK);
+        Elements prices = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRICE);
+        Elements presences = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRESENCE);
+        Elements images = document.getElementsByClass(CLASSES.IMAGES);
+
+        System.out.println("titles = " + titles.size());
+        System.out.println("prices = " + prices.size());
+        System.out.println("presences = " + presences.size());
+        System.out.println("images = " + images.size());
+        System.out.println("links = " + links.size());
+
+        for (int i = 0; i < titles.size(); i++) {
+//                                System.out.println("title = " + title);
+//                                System.out.println("link = " + BASE.URL + links.get(i).attr("href").replace("/ua/", ""));
+            Product product = new Product(titles.get(i).text(),
+                    images.get(i).absUrl("src"),
+                    prices.get(i).attr("data-qaprice") + " грн.",
+                    0,
+                    presences.get(i).text(),
+                    links.get(i * 2).attr("href"),
+                    seoLinks);
+            products.add(product);
+        }
+        System.out.println("products = " + products.size());
+
+        return products;
     }
 }

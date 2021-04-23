@@ -1,6 +1,8 @@
 package com.project.searchproducts.utils;
 
 public final class Constants {
+    public static final String INTENT_KEY = "product";
+
     public static final class BASE {
         public static final String URL = "https://prom.ua/";
     }
@@ -11,6 +13,7 @@ public final class Constants {
         }
 
         public static final class VALUES {
+            public static final String SEO_LINKS = "seo_links";
             public static final String PRODUCT_LINK = "product_link";
             public static final String PRODUCT_PRICE = "product_price";
             public static final String PRODUCT_PRESENCE = "product_presence";

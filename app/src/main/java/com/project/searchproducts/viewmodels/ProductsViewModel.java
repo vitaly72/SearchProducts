@@ -18,6 +18,11 @@ public class ProductsViewModel extends ViewModel {
         productsData = NetworkRepository.getInstance().searchProducts(searchTerm);
     }
 
+    public void searchByTag(String tag) {
+        if (productsData != null) return;
+        productsData = NetworkRepository.getInstance().searchProductByTag(tag);
+    }
+
     public void detailsProduct(String productId) {
         if (productsDetailsData != null) return;
         productsDetailsData = NetworkRepository.getInstance().detailsProduct(productId);

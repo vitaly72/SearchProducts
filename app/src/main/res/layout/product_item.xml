@@ -10,18 +10,18 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="170dp"
+        android:layout_width="200dp"
         android:layout_height="300dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/product_background">
 
         <ImageView
             android:id="@+id/imageViewProduct"
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="180dp"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/product_image_background"
             android:layout_marginTop="10dp"
+            android:background="@drawable/product_image_background"
             android:contentDescription="@string/enter_product_name"
             app:imageUrl="@{product.imageUrl}"
             app:layout_constraintEnd_toEndOf="parent"
@@ -34,9 +34,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@{product.title}"
-            android:inputType="textMultiLine"
-            android:textColor="@color/prussian_blue"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:textColor="@color/light"
             android:textAlignment="viewStart"
+            android:textStyle="bold"
             android:maxLines="2"
             android:lines="2"
             android:ellipsize="end"
@@ -52,23 +53,105 @@
             android:layout_marginTop="8dp"
             android:textStyle="bold"
             android:text="@{product.price}"
-            android:textColor="@color/prussian_blue"
+            android:textColor="@color/dark"
             android:layout_marginHorizontal="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 
-        <TextView
-            android:id="@+id/textViewPresence"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="@{product.presence}"
-            android:textColor="@color/red"
-            android:layout_marginHorizontal="10dp"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewPrice" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewPrice">
+
+            <TextView
+                android:id="@+id/textViewPresence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@{product.presence}"
+                android:textColor="@color/cream"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/ic_heart"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textViewPresence" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--    <com.facebook.shimmer.ShimmerFrameLayout-->
+<!--        android:id="@+id/ShimmerFrameLayout"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="300dp"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:background="@drawable/product_background">-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imageViewProductShimmer"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="180dp"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:background="#ddd"-->
+<!--            android:contentDescription="@string/enter_product_name"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/textViewTitleShimmer"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:inputType="textMultiLine|textNoSuggestions"-->
+<!--            android:textAlignment="viewStart"-->
+<!--            android:maxLines="2"-->
+<!--            android:lines="2"-->
+<!--            android:ellipsize="end"-->
+<!--            android:background="#ddd"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/imageViewProduct"-->
+<!--            tools:layout_editor_absoluteX="0dp"-->
+<!--            tools:ignore="TextViewEdits" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/textViewPriceShimmer"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:background="#ddd"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/textViewPresenceShimmer"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:paddingBottom="8dp"-->
+<!--            android:background="#ddd"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textViewPrice" />-->
+<!--    </com.facebook.shimmer.ShimmerFrameLayout>-->
+
+
 </layout>

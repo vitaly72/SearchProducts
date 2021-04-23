@@ -10,7 +10,6 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.project.searchproducts.BR;
 import com.project.searchproducts.databinding.ProductItemBinding;
 import com.project.searchproducts.models.Product;
 import com.squareup.picasso.Picasso;
@@ -87,8 +86,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 //        notifyDataSetChanged();
 //    }
 //
-//    public void clear() {
-//        this.Products.clear();
-//        notifyDataSetChanged();
-//    }
+    public void clear() {
+        this.products.clear();
+        notifyDataSetChanged();
+    }
 }

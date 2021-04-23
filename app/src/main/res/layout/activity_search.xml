@@ -8,14 +8,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/honeydew"
+        android:background="@color/light"
         android:orientation="vertical"
         tools:context=".screens.SearchActivity">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/celaden_blue"
+            android:background="@color/dark"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -24,11 +24,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:paddingVertical="5dp"
-                android:layout_marginHorizontal="25dp"
+                android:layout_marginHorizontal="10dp"
                 android:hint="@string/enter_product_name"
-                android:textColor="@color/celaden_blue"
+                android:maxLines="1"
+                android:textColor="@color/dark"
+                android:textStyle="bold"
                 android:textAlignment="center"
-                android:textColorHint="@color/powder_blue"
+                android:inputType="text|textNoSuggestions"
+                android:textColorHint="@color/green"
                 android:background="@drawable/product_image_background"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints"
@@ -47,9 +50,34 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/viewGroupSeoLinks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"/>
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="25dp"
+            android:layout_marginHorizontal="10dp"
             android:orientation="vertical">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progressIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewMain"

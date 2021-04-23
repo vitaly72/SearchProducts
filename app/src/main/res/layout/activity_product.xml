@@ -3,10 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="product"
+            type="com.project.searchproducts.models.Product" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/powder_blue"
+        android:background="@color/green"
         tools:context=".screens.DetailsActivity">
 
         <androidx.viewpager.widget.ViewPager
@@ -21,13 +27,14 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewName"
+            android:id="@+id/textViewTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
             android:layout_marginTop="25dp"
-            android:text="@string/name"
-            android:textColor="@color/honeydew"
+            android:text="@{product.title}"
+            android:textColor="@color/light"
+            android:textStyle="bold"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/viewPager"
@@ -39,11 +46,11 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
             android:layout_marginTop="25dp"
-            android:text="@string/price"
-            android:textColor="@color/prussian_blue"
+            android:text="@{product.price}"
+            android:textColor="@color/dark"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 
         <TextView
             android:id="@+id/textViewCharacteristics"
@@ -51,8 +58,9 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
             android:layout_marginTop="25dp"
-            android:textColor="@color/honeydew"
+            android:textColor="@color/cream"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/textViewPrice" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

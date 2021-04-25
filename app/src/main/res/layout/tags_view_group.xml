@@ -1,0 +1,86 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="java.util.List"/>
+        <import type="com.project.searchproducts.models.SeoLinks"/>
+        <variable
+            name="tags"
+            type="List&lt;SeoLinks&gt;"/>
+    </data>
+
+    <LinearLayout
+        android:id="@+id/tagsGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent">
+
+            <LinearLayout
+                android:id="@+id/viewGroupSeoLinks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tagTextView0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tags_background"
+                    android:padding="10dp"
+                    android:text="@{tags.get(0).title}"
+                    android:textColor="@color/green"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tagTextView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@{tags.get(1).title}"
+                    android:background="@drawable/tags_background"
+                    android:padding="10dp"
+                    android:textColor="@color/green"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tagTextView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@{tags.get(2).title}"
+                    android:background="@drawable/tags_background"
+                    android:padding="10dp"
+                    android:textColor="@color/green"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tagTextView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@{tags.get(3).title}"
+                    android:background="@drawable/tags_background"
+                    android:padding="10dp"
+                    android:textColor="@color/green"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tagTextView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@{tags.get(4).title}"
+                    android:background="@drawable/tags_background"
+                    android:padding="10dp"
+                    android:textColor="@color/green"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+</layout>

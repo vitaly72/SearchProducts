@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data />
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.project.searchproducts.viewmodels.ProductsViewModel" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,58 +17,19 @@
         android:orientation="vertical"
         tools:context=".screens.SearchActivity">
 
-        <RelativeLayout
+        <include
+            android:id="@+id/headerView"
+            layout="@layout/header_view"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/dark"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_height="50dp" />
 
-            <EditText
-                android:id="@+id/searchTextView"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:paddingVertical="5dp"
-                android:layout_marginHorizontal="10dp"
-                android:hint="@string/enter_product_name"
-                android:maxLines="1"
-                android:textColor="@color/dark"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:inputType="text|textNoSuggestions"
-                android:textColorHint="@color/green"
-                android:background="@drawable/product_image_background"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteX="25dp" />
-
-            <ImageButton
-                android:id="@+id/searchButton"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignEnd="@+id/searchTextView"
-                android:background="@drawable/ic_baseline_search_24"
-                android:text="@string/search"
-                android:textAllCaps="false"
-                android:contentDescription="@string/app_name" />
-        </RelativeLayout>
-
-        <LinearLayout
+        <include
+            android:id="@+id/tagsViewGroup"
+            layout="@layout/tags_view_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/viewGroupSeoLinks"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"/>
-            </HorizontalScrollView>
-        </LinearLayout>
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,9 +41,9 @@
                 android:id="@+id/progressIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
                 android:layout_gravity="center"
-                android:indeterminate="true" />
+                android:visibility="invisible"
+                android:indeterminate="true"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewMain"

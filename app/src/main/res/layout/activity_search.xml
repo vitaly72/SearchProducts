@@ -26,6 +26,7 @@
         <include
             android:id="@+id/tagsViewGroup"
             layout="@layout/tags_view_group"
+            app:IOnClick="@{viewModel.onClickListenerTag}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"

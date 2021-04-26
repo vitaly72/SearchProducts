@@ -23,7 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public final class NetworkRepository {
+public class NetworkRepository {
     private static NetworkRepository instance;
 
     private NetworkRepository() {
@@ -59,7 +59,7 @@ public final class NetworkRepository {
 
     public MutableLiveData<List<Product>> searchProductByTag(String tag) {
         MutableLiveData<List<Product>> data = new MutableLiveData<>();
-        String tagLink = tag.replace("ua/", "");
+        String tagLink = tag.replace("/ua/", "");
 
         NetworkService.createService()
                 .searchByTag(tagLink)
@@ -67,6 +67,7 @@ public final class NetworkRepository {
                     @Override
                     public void onResponse(@NotNull Call<String> call,
                                            @NotNull Response<String> response) {
+                        System.out.println("response tag = " + response);
                         if (response.isSuccessful() && response.body() != null) {
                             data.setValue(parseProducts(response.body()));
                         }
@@ -75,6 +76,7 @@ public final class NetworkRepository {
                     @Override
                     public void onFailure(@NotNull Call<String> call,
                                           @NotNull Throwable throwable) {
+                        throwable.printStackTrace();
                         data.setValue(null);
                     }
                 });

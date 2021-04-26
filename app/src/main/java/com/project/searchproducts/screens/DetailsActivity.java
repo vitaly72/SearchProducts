@@ -21,10 +21,11 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityProductBinding productBinding = DataBindingUtil
                 .setContentView(this, R.layout.activity_product);
-        ProductsViewModel productsViewModel = ViewModelProviders
-                .of(this)
-                .get(ProductsViewModel.class);
+//        ProductsViewModel productsViewModel = ViewModelProviders
+//                .of(this)
+//                .get(ProductsViewModel.class);
 
+        ProductsViewModel productsViewModel = new ProductsViewModel();
         Intent intent = getIntent();
         String movieJsonString = intent.getStringExtra(Constants.INTENT_KEY);
         Product product = JSONUtils.getGsonParser().fromJson(movieJsonString, Product.class);

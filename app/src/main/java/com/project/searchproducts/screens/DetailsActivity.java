@@ -1,7 +1,9 @@
 package com.project.searchproducts.screens;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -30,20 +32,36 @@ public class DetailsActivity extends AppCompatActivity {
         String movieJsonString = intent.getStringExtra(Constants.INTENT_KEY);
         Product product = JSONUtils.getGsonParser().fromJson(movieJsonString, Product.class);
         productBinding.setProduct(product);
+        System.out.println("detail link = " + product.getDetailsLink());
+        productBinding.textViewOpenBrowser.setOnClickListener(v -> {
+            String link = Constants.BASE.URL + product.getDetailsLink().replace("/ua", "ua").split("\\?token")[0];
+            System.out.println("link = " + link);
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+//            startActivity(browserIntent);
+        });
 
         productsViewModel.detailsProduct(product.getDetailsLink());
+        productBinding.progressIndicatorProduct.setVisibility(View.VISIBLE);
         productsViewModel.getProductsDetailsData().observe(this, response -> {
             if (response != null) {
+                productBinding.progressIndicatorProduct.setVisibility(View.GONE);
                 System.out.println("response.getImageLinks().size() = " + response.getImageLinks().size());
                 ViewPagerAdapter adapter = new ViewPagerAdapter(this, response.getImageLinks());
                 productBinding.viewPager.setAdapter(adapter);
+                productBinding.dotsIndicator.setViewPager(productBinding.viewPager);
 
-                String characteristics = "";
-                for (String key : response.getCharacteristic().keySet()) {
-                    characteristics += key + "\t" + response.getCharacteristic().get(key) + "\n";
-                    System.out.println(key);
-                }
-                productBinding.textViewCharacteristics.setText(characteristics);
+//                StringBuilder characteristics = new StringBuilder();
+//                for (String key : response.getCharacteristic().keySet()) {
+//                    characteristics.append(key)
+//                            .append(": ")
+//                            .append(response.getCharacteristic().get(key))
+//                            .append("\n");
+//                    System.out.println(key);
+//                }
+                System.out.println("response.getDescriptions() = " + response.getDescriptions());
+//                productBinding.textViewCharacteristics.setText(characteristics.toString());
+                String descriptions = response.getDescriptions().replace(". ", ".\n");
+                productBinding.textViewDescriptions.setText(descriptions);
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.project.searchproducts.adapters;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.project.searchproducts.R;
 import com.project.searchproducts.databinding.ProductItemBinding;
 import com.project.searchproducts.models.Product;
 import com.squareup.picasso.Picasso;
@@ -67,6 +69,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 if (onClickListener != null && productItemBinding != null) {
                     onClickListener.onClick(productItemBinding.getProduct());
                 }
+            });
+            productItemBinding.likeButton.setOnClickListener(v -> {
+
             });
         }
 

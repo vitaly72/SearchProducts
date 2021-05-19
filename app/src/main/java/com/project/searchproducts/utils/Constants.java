@@ -22,9 +22,11 @@ public final class Constants {
     }
 
     public static final class CLASSES {
-        public static final String TITLES = "ek-text ek-text_color_black-800 ek-text_wrap_two-line";
+//        public static final String TITLES = "ek-text ek-text_color_black-800 ek-text_wrap_two-line";
+        public static final String TITLES = "ek-text ek-text_wrap_break ek-text_wrap_two-line style__productName--3RApr";
         public static final String IMAGES = "lazyImage__image--APkHl";
         public static final String CHARACTERISTIC_NAME = "ek-text ek-text_color_black-600 ek-text_wrap_break";
         public static final String CHARACTERISTIC_VALUE = "ek-text ek-text_wrap_break";
+        public static final String DESCRIPTIONS = "descriptions";
     }
 }

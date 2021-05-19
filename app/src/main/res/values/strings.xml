@@ -6,4 +6,9 @@
     <string name="price">price</string>
     <string name="name">name</string>
     <string name="details">details</string>
+    <string name="filters">Фільтри</string>
+    <string name="category">Категорія</string>
+    <string name="prices">Ціни</string>
+    <string name="todo">TODO</string>
+    <string name="details_info">Переглянути детальну інформацію</string>
 </resources>

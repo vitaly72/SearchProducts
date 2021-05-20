@@ -71,7 +71,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 }
             });
             productItemBinding.likeButton.setOnClickListener(v -> {
-
+                System.out.println("like click");
             });
         }
 
@@ -85,12 +85,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public static void loadImage(ImageView imageView, String url) {
         Picasso.get().load(url).into(imageView);
     }
-//
-//    public void addProducts(List<Product> Products) {
-//        this.Products.addAll(Products);
-//        notifyDataSetChanged();
-//    }
-//
+
+    public void addProducts(List<Product> products) {
+        this.products.addAll(products);
+        notifyDataSetChanged();
+    }
+
     public void clear() {
         this.products.clear();
         notifyDataSetChanged();

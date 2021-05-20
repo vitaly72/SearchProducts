@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.ProductDetails;
+import com.project.searchproducts.models.SearchData;
 import com.project.searchproducts.models.SeoLinks;
 import com.project.searchproducts.network.NetworkRepository;
 import com.project.searchproducts.network.SortType;
@@ -20,12 +21,12 @@ public class ProductsViewModel extends ViewModel implements Observable, ISearchP
     public ObservableField<List<SeoLinks>> seoLinks = new ObservableField<>();
 
     @Override
-    public void search(String searchTerm, String minPrice, String maxPrice, SortType sort) {
+    public void search(SearchData searchData) {
 //        if (productsData != null) return;
-        productsData = NetworkRepository.getInstance().searchProducts(searchTerm, minPrice, maxPrice, sort);
+        productsData = NetworkRepository.getInstance().searchProducts(searchData);
 
         if (productsData.getValue() != null) {
-            System.out.println("searchTerm null = " + searchTerm);
+            System.out.println("searchTerm null = " + searchData.getSearchTerm());
             seoLinks.set(productsData.getValue().get(0).getSeoLinks());
         }
     }

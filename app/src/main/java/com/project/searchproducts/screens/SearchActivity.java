@@ -16,6 +16,7 @@ import com.project.searchproducts.adapters.IOnClickListener;
 import com.project.searchproducts.adapters.ProductAdapter;
 import com.project.searchproducts.databinding.ActivitySearchBinding;
 import com.project.searchproducts.models.Product;
+import com.project.searchproducts.models.SearchData;
 import com.project.searchproducts.models.SeoLinks;
 import com.project.searchproducts.network.SortType;
 import com.project.searchproducts.utils.Constants;
@@ -41,6 +42,8 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     private SortType sortType = SortType.SCORE;
     private String minPrice = "";
     private String maxPrice = "";
+    private int page = 1;
+    private boolean loading = false;
     private List<Double> priceRange = new ArrayList<>();
 
     @SuppressLint({"ResourceAsColor", "SetJavaScriptEnabled"})
@@ -63,9 +66,11 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
                 new GridSpacingItemDecoration(2, 40, false));
         searchBinding.recyclerViewMain.setAdapter(productAdapter);
 
-        searchBinding.headerView.searchButton.setOnClickListener(v -> {
-            loadWithFilters(sortType, minPrice, maxPrice);
-        });
+        searchBinding.headerView.searchButton.setOnClickListener(v ->
+                loadWithFilters(sortType, minPrice, maxPrice)
+        );
+
+        searchBinding.textViewLoadMore.setOnClickListener(v -> loadNextPage());
 
         searchBinding.filtersViewGroup.pricesTextView.setOnClickListener(v -> {
             popUpWindowPrice.showPopupWindow(v);
@@ -82,13 +87,29 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
 
     }
 
+    private void loadNextPage() {
+        searchBinding.progressIndicator.setVisibility(View.VISIBLE);
+        page++;
+        SearchData searchData = new SearchData("JBL", minPrice,
+                maxPrice, sortType, Integer.toString(page));
+        productsViewModel.search(searchData);
+
+        productsViewModel.getProductsData().observe(this, products -> {
+            searchBinding.progressIndicator.setVisibility(View.GONE);
+
+            productAdapter.addProducts(products);
+            priceRange = getPriceRange(products);
+        });
+    }
+
     private void loadWithFilters(SortType sortBy, String minPrice, String maxPrice) {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
         String searchTerm = "JBL";
         this.sortType = sortBy;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
-        productsViewModel.search(searchTerm, minPrice, maxPrice, sortBy);
+        SearchData searchData = new SearchData(searchTerm, minPrice, maxPrice, sortBy, "");
+        productsViewModel.search(searchData);
 
         productsViewModel.getProductsData().observe(this, products -> {
             searchBinding.backgroundImageView.setVisibility(View.GONE);

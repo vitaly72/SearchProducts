@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.ProductDetails;
+import com.project.searchproducts.models.SearchData;
 import com.project.searchproducts.models.SeoLinks;
 import com.project.searchproducts.utils.Constants.ATTRIBUTES.KEYS;
 import com.project.searchproducts.utils.Constants.ATTRIBUTES.VALUES;
@@ -35,13 +36,14 @@ public class NetworkRepository {
         return instance;
     }
 
-    public MutableLiveData<List<Product>> searchProducts(String searchTerm,
-                                                         String minPrice,
-                                                         String maxPrice,
-                                                         SortType sort) {
+    public MutableLiveData<List<Product>> searchProducts(SearchData searchData) {
         MutableLiveData<List<Product>> data = new MutableLiveData<>();
         NetworkService.createService()
-                .search(searchTerm, minPrice, maxPrice, sort)
+                .search(searchData.getSearchTerm(),
+                        searchData.getMinPrice(),
+                        searchData.getMaxPrice(),
+                        searchData.getSort(),
+                        searchData.getPage())
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(@NotNull Call<String> call,

@@ -5,4 +5,9 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/dark</item>
     </style>
+
+    <style name="checkBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/red</item>
+        <item name="colorControlActivated">@color/red</item>
+    </style>
 </resources>

@@ -18,6 +18,7 @@
     <string name="byScore">За рейтингом</string>
     <string name="byMinPrice">Дешевше</string>
     <string name="byMaxPrice">Дорожче</string>
+    <string name="loadMore">Завантажити ще</string>
     <array name="double_slider_values">
         <item>10</item>
         <item>100</item>

@@ -35,11 +35,13 @@ public class NetworkRepository {
         return instance;
     }
 
-    public MutableLiveData<List<Product>> searchProducts(String searchTerm) {
+    public MutableLiveData<List<Product>> searchProducts(String searchTerm,
+                                                         String minPrice,
+                                                         String maxPrice,
+                                                         SortType sort) {
         MutableLiveData<List<Product>> data = new MutableLiveData<>();
-
         NetworkService.createService()
-                .search(searchTerm)
+                .search(searchTerm, minPrice, maxPrice, sort)
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(@NotNull Call<String> call,

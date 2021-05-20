@@ -7,8 +7,19 @@
     <string name="name">name</string>
     <string name="details">details</string>
     <string name="filters">Фільтри</string>
-    <string name="category">Категорія</string>
+    <string name="category">Сортування</string>
     <string name="prices">Ціни</string>
     <string name="todo">TODO</string>
     <string name="details_info">Переглянути детальну інформацію</string>
+    <string name="priceRange">Діапазон цін, грн.</string>
+    <string name="_0">0</string>
+    <string name="ok">OK</string>
+    <string name="sortby">Сортування</string>
+    <string name="byScore">За рейтингом</string>
+    <string name="byMinPrice">Дешевше</string>
+    <string name="byMaxPrice">Дорожче</string>
+    <array name="double_slider_values">
+        <item>10</item>
+        <item>100</item>
+    </array>
 </resources>

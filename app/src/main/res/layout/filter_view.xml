@@ -25,14 +25,14 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/ic_filter"
-            app:layout_constraintEnd_toEndOf="@+id/filterTextView"
-            app:layout_constraintTop_toTopOf="@+id/filterTextView" />
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:contentDescription="@string/todo"-->
+<!--            android:src="@drawable/ic_filter"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/filterTextView"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/filterTextView" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

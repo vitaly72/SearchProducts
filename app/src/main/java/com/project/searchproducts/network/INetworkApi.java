@@ -7,7 +7,10 @@ import retrofit2.http.Query;
 
 public interface INetworkApi {
     @GET("ua/search")
-    Call<String> search(@Query("search_term") String searchTerm);
+    Call<String> search(@Query("search_term") String searchTerm,
+                        @Query("price_local__gte") String minPrice,
+                        @Query("price_local__lte") String maxPrice,
+                        @Query("sort") SortType sort);
 
     @GET("ua/{tag}")
     Call<String> searchByTag(@Path("tag") String tag);

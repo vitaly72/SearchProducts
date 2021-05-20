@@ -17,27 +17,31 @@ import com.project.searchproducts.adapters.ProductAdapter;
 import com.project.searchproducts.databinding.ActivitySearchBinding;
 import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.SeoLinks;
-import com.project.searchproducts.network.WebParsing;
+import com.project.searchproducts.network.SortType;
 import com.project.searchproducts.utils.Constants;
 import com.project.searchproducts.utils.JSONUtils;
 import com.project.searchproducts.viewmodels.IOnClickListenerTag;
 import com.project.searchproducts.viewmodels.ProductsViewModel;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+public class SearchActivity extends AppCompatActivity implements IOnClickListenerTag,
+        IOnClickListener,
+        IOnClickPopUpWindowPrice,
+        IOnClickPopUpWindowSort {
 
-public class SearchActivity extends AppCompatActivity implements
-        IOnClickListenerTag,
-        IOnClickListener {
     private ProductsViewModel productsViewModel;
     private ActivitySearchBinding searchBinding;
     private ProductAdapter productAdapter;
+    private PopUpWindowPrice popUpWindowPrice;
+    private PopUpWindowSort popUpWindowSort;
     private List<SeoLinks> seoLinks;
+    private SortType sortType = SortType.SCORE;
+    private String minPrice = "";
+    private String maxPrice = "";
+    private List<Double> priceRange = new ArrayList<>();
 
     @SuppressLint({"ResourceAsColor", "SetJavaScriptEnabled"})
     @Override
@@ -49,6 +53,9 @@ public class SearchActivity extends AppCompatActivity implements
         searchBinding.setLifecycleOwner(this);
         productsViewModel.setOnClickListenerTag(this);
 
+        popUpWindowPrice = new PopUpWindowPrice();
+        popUpWindowSort = new PopUpWindowSort();
+
         productAdapter = new ProductAdapter();
         productAdapter.setOnClickListener(this);
         searchBinding.recyclerViewMain.setLayoutManager(new GridLayoutManager(this, 2));
@@ -57,20 +64,56 @@ public class SearchActivity extends AppCompatActivity implements
         searchBinding.recyclerViewMain.setAdapter(productAdapter);
 
         searchBinding.headerView.searchButton.setOnClickListener(v -> {
-            searchBinding.progressIndicator.setVisibility(View.VISIBLE);
-            String searchTerm = "JBL";
-            productsViewModel.search(searchTerm);
-
-            productsViewModel.getProductsData().observe(this, products -> {
-                searchBinding.backgroundImageView.setVisibility(View.GONE);
-                searchBinding.progressIndicator.setVisibility(View.GONE);
-                searchBinding.mainScrollView.setVisibility(View.VISIBLE);
-
-                seoLinks = products.get(0).getSeoLinks();
-                searchBinding.tagsViewGroup.setTags(seoLinks);
-                productAdapter.setProducts(products);
-            });
+            loadWithFilters(sortType, minPrice, maxPrice);
         });
+
+        searchBinding.filtersViewGroup.pricesTextView.setOnClickListener(v -> {
+            popUpWindowPrice.showPopupWindow(v);
+            popUpWindowPrice.setIOnClickPopUpWindow(this);
+            popUpWindowPrice.setPriceRange(Double.toString(priceRange.get(0)),
+                    Double.toString(priceRange.get(1)));
+        });
+
+        searchBinding.filtersViewGroup.categoryTextView.setOnClickListener(v -> {
+            popUpWindowSort.showPopupWindow(v);
+            popUpWindowSort.setCurrentType(this.sortType);
+            popUpWindowSort.setIOnClickPopUpWindow(this);
+        });
+
+    }
+
+    private void loadWithFilters(SortType sortBy, String minPrice, String maxPrice) {
+        searchBinding.progressIndicator.setVisibility(View.VISIBLE);
+        String searchTerm = "JBL";
+        this.sortType = sortBy;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
+        productsViewModel.search(searchTerm, minPrice, maxPrice, sortBy);
+
+        productsViewModel.getProductsData().observe(this, products -> {
+            searchBinding.backgroundImageView.setVisibility(View.GONE);
+            searchBinding.progressIndicator.setVisibility(View.GONE);
+            searchBinding.mainScrollView.setVisibility(View.VISIBLE);
+
+            seoLinks = products.get(0).getSeoLinks();
+            searchBinding.tagsViewGroup.setTags(seoLinks);
+            productAdapter.setProducts(products);
+            priceRange = getPriceRange(products);
+        });
+    }
+
+    private List<Double> getPriceRange(List<Product> products) {
+        List<Double> priceRange = new ArrayList<>();
+        List<Double> prices = new ArrayList<>();
+
+        for (Product product : products) {
+            prices.add(Double.parseDouble(product.getPrice().replace(" грн.", "")));
+        }
+
+        priceRange.add(Collections.min(prices));
+        priceRange.add(Collections.max(prices));
+
+        return priceRange;
     }
 
     @Override
@@ -95,6 +138,16 @@ public class SearchActivity extends AppCompatActivity implements
 
             productAdapter.setProducts(products);
         });
+    }
+
+    @Override
+    public void onClickPopUpWindow(String minPrice, String maxPrice) {
+        loadWithFilters(sortType, minPrice, maxPrice);
+    }
+
+    @Override
+    public void onClickPopUpWindow(SortType sortBy) {
+        loadWithFilters(sortBy, minPrice, maxPrice);
     }
 }
 

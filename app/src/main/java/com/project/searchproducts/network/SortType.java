@@ -1,5 +1,7 @@
 package com.project.searchproducts.network;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum SortType {
     SCORE("-score"), MAX("-price"), MIN("price");
 
@@ -9,6 +11,7 @@ public enum SortType {
         this.text = text;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return text;

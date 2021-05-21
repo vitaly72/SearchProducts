@@ -12,15 +12,18 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.project.searchproducts.R;
 import com.project.searchproducts.adapters.GridSpacingItemDecoration;
+import com.project.searchproducts.adapters.IOnCheckedFavorite;
 import com.project.searchproducts.adapters.IOnClickListener;
 import com.project.searchproducts.adapters.ProductAdapter;
 import com.project.searchproducts.databinding.ActivitySearchBinding;
 import com.project.searchproducts.models.Product;
+import com.project.searchproducts.models.ProductFavorite;
 import com.project.searchproducts.models.SearchData;
 import com.project.searchproducts.models.SeoLinks;
 import com.project.searchproducts.network.SortType;
 import com.project.searchproducts.utils.Constants;
 import com.project.searchproducts.utils.JSONUtils;
+import com.project.searchproducts.viewmodels.FavoriteProductViewModel;
 import com.project.searchproducts.viewmodels.IOnClickListenerTag;
 import com.project.searchproducts.viewmodels.ProductsViewModel;
 
@@ -30,10 +33,11 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements IOnClickListenerTag,
         IOnClickListener,
+        IOnCheckedFavorite,
         IOnClickPopUpWindowPrice,
         IOnClickPopUpWindowSort {
-
     private ProductsViewModel productsViewModel;
+    private FavoriteProductViewModel favoriteProductViewModel;
     private ActivitySearchBinding searchBinding;
     private ProductAdapter productAdapter;
     private PopUpWindowPrice popUpWindowPrice;
@@ -43,7 +47,6 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     private String minPrice = "";
     private String maxPrice = "";
     private int page = 1;
-    private boolean loading = false;
     private List<Double> priceRange = new ArrayList<>();
 
     @SuppressLint({"ResourceAsColor", "SetJavaScriptEnabled"})
@@ -52,6 +55,7 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         super.onCreate(savedInstanceState);
         searchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search);
         productsViewModel = ViewModelProviders.of(this).get(ProductsViewModel.class);
+        favoriteProductViewModel = ViewModelProviders.of(this).get(FavoriteProductViewModel.class);
         searchBinding.setViewModel(productsViewModel);
         searchBinding.setLifecycleOwner(this);
         productsViewModel.setOnClickListenerTag(this);
@@ -70,6 +74,10 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
                 loadWithFilters(sortType, minPrice, maxPrice)
         );
 
+        searchBinding.headerView.likesButton.setOnClickListener(v ->
+                startActivity(new Intent(SearchActivity.this, FavoriteProductActivity.class))
+        );
+
         searchBinding.textViewLoadMore.setOnClickListener(v -> loadNextPage());
 
         searchBinding.filtersViewGroup.pricesTextView.setOnClickListener(v -> {
@@ -85,6 +93,7 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
             popUpWindowSort.setIOnClickPopUpWindow(this);
         });
 
+        productAdapter.setOnCheckedFavorite(this);
     }
 
     private void loadNextPage() {
@@ -170,5 +179,28 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     public void onClickPopUpWindow(SortType sortBy) {
         loadWithFilters(sortBy, minPrice, maxPrice);
     }
-}
 
+    @Override
+    public void onChecked(boolean isCheck, int position) {
+        Product product = productAdapter.getProducts().get(position);
+        int id = getIdFromLink(product.getDetailsLink());
+        System.out.println("isCheck = " + isCheck);
+        if (isCheck) {
+            ProductFavorite productFavorite = new ProductFavorite(
+                    id,
+                    product.getTitle(),
+                    product.getPrice(),
+                    product.getPresence()
+            );
+            favoriteProductViewModel.insertFavouriteProduct(productFavorite);
+        } else {
+            favoriteProductViewModel.deleteFavouriteProduct(id);
+        }
+    }
+
+    private int getIdFromLink(String link) {
+        String idStr = link.split("-")[0].replaceAll("[^0-9]", "");
+
+        return Integer.parseInt(idStr);
+    }
+}

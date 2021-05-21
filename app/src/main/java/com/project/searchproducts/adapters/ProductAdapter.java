@@ -1,6 +1,5 @@
 package com.project.searchproducts.adapters;
 
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.project.searchproducts.R;
 import com.project.searchproducts.databinding.ProductItemBinding;
 import com.project.searchproducts.models.Product;
 import com.squareup.picasso.Picasso;
@@ -21,6 +19,9 @@ import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private IOnClickListener onClickListener;
+
+    private IOnCheckedFavorite onCheckedFavorite;
+
     private List<Product> products;
 
     public ProductAdapter() {
@@ -70,15 +71,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     onClickListener.onClick(productItemBinding.getProduct());
                 }
             });
-            productItemBinding.likeButton.setOnClickListener(v -> {
-                System.out.println("like click");
-            });
         }
 
         public void bind(Product product) {
             productItemBinding.setProduct(product);
             productItemBinding.executePendingBindings();
+            productItemBinding.likeButton.setOnCheckedChangeListener(
+                    (v, isChecked) -> onCheckedFavorite.onChecked(isChecked, getAdapterPosition())
+            );
         }
+
     }
 
     @BindingAdapter("bind:imageUrl")
@@ -94,5 +96,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void clear() {
         this.products.clear();
         notifyDataSetChanged();
+    }
+
+    public void setOnCheckedFavorite(IOnCheckedFavorite onCheckedFavorite) {
+        this.onCheckedFavorite = onCheckedFavorite;
     }
 }

@@ -7,27 +7,14 @@
 
         <variable
             name="product"
-            type="com.project.searchproducts.models.Product" />
+            type="com.project.searchproducts.models.ProductFavorite" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="200dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
         android:background="@drawable/product_background">
-
-        <ImageView
-            android:id="@+id/imageViewProduct"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/product_image_background"
-            android:contentDescription="@string/enter_product_name"
-            app:imageUrl="@{product.imageUrl}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textViewTitle"
@@ -43,38 +30,27 @@
             android:textAlignment="viewStart"
             android:textColor="@color/light"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewProduct"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:ignore="TextViewEdits"
             tools:layout_editor_absoluteX="0dp" />
-
-        <TextView
-            android:id="@+id/textViewPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="8dp"
-            android:text="@{product.price}"
-            android:textColor="@color/dark"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginHorizontal="10dp"
+            android:paddingBottom="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewPrice">
+            app:layout_constraintTop_toBottomOf="@+id/textViewTitle">
 
             <TextView
-                android:id="@+id/textViewPresence"
+                android:id="@+id/textViewFavorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginTop="8dp"
-                android:paddingBottom="8dp"
+                android:paddingVertical="5dp"
+                android:textAlignment="viewStart"
                 android:text="@{product.presence}"
                 android:textColor="@color/cream"
                 android:textStyle="bold" />
@@ -84,12 +60,27 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
+            <TextView
+                android:id="@+id/textViewPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:text="@{product.price}"
+                android:textColor="@color/dark"
+                android:textStyle="bold"
+                android:textAlignment="textStart" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <CheckBox
-                android:id="@+id/likeButton"
+                android:id="@+id/likeButtonFavorite"
                 android:layout_width="26dp"
                 android:layout_height="22dp"
-                android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="4dp"
+                android:checked="true"
                 android:button="@drawable/checkbox_selector"
                 android:theme="@style/checkBox"
                 app:layout_constraintBottom_toBottomOf="parent"

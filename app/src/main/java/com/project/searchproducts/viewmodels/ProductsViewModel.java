@@ -10,7 +10,6 @@ import com.project.searchproducts.models.ProductDetails;
 import com.project.searchproducts.models.SearchData;
 import com.project.searchproducts.models.SeoLinks;
 import com.project.searchproducts.network.NetworkRepository;
-import com.project.searchproducts.network.SortType;
 
 import java.util.List;
 
@@ -22,11 +21,9 @@ public class ProductsViewModel extends ViewModel implements Observable, ISearchP
 
     @Override
     public void search(SearchData searchData) {
-//        if (productsData != null) return;
         productsData = NetworkRepository.getInstance().searchProducts(searchData);
 
         if (productsData.getValue() != null) {
-            System.out.println("searchTerm null = " + searchData.getSearchTerm());
             seoLinks.set(productsData.getValue().get(0).getSeoLinks());
         }
     }

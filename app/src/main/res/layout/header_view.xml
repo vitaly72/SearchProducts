@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/searchTextView"
+            android:id="@+id/searchEditText"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="25dp"
@@ -37,7 +37,7 @@
             android:layout_height="22dp"
             android:layout_marginTop="6dp"
             android:layout_marginStart="2dp"
-            android:layout_alignStart="@+id/searchTextView"
+            android:layout_alignStart="@+id/searchEditText"
             android:background="@drawable/ic_heart_dark"
             android:contentDescription="@string/app_name"/>
 
@@ -45,7 +45,7 @@
             android:id="@+id/searchButton"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_alignEnd="@+id/searchTextView"
+            android:layout_alignEnd="@+id/searchEditText"
             android:background="@drawable/ic_baseline_search_24"
             android:contentDescription="@string/app_name" />
     </RelativeLayout>

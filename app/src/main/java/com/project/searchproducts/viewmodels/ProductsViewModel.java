@@ -19,6 +19,10 @@ public class ProductsViewModel extends ViewModel implements Observable, ISearchP
     private MutableLiveData<ProductDetails> productsDetailsData;
     public ObservableField<List<SeoLinks>> seoLinks = new ObservableField<>();
 
+    /**
+     * Виконує запит для пошуку товару
+     * @param searchData
+     */
     @Override
     public void search(SearchData searchData) {
         productsData = NetworkRepository.getInstance().searchProducts(searchData);
@@ -28,6 +32,7 @@ public class ProductsViewModel extends ViewModel implements Observable, ISearchP
         }
     }
 
+
     public void setOnClickListenerTag(IOnClickListenerTag OnClickListenerTag) {
         this.OnClickListenerTag = OnClickListenerTag;
     }
@@ -36,11 +41,19 @@ public class ProductsViewModel extends ViewModel implements Observable, ISearchP
         return this.OnClickListenerTag;
     }
 
+    /**
+     * Пошуку товарів по тегу
+     * @param tag
+     */
     @Override
     public void searchByTag(String tag) {
         productsData = NetworkRepository.getInstance().searchProductByTag(tag);
     }
 
+    /**
+     * Виконує запит для детальної інформації про товар
+     * @param productId
+     */
     public void detailsProduct(String productId) {
         productsDetailsData = NetworkRepository.getInstance().detailsProduct(productId);
     }

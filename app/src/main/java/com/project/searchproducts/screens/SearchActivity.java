@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.narify.netdetect.NetDetect;
 import com.project.searchproducts.R;
 import com.project.searchproducts.adapters.GridSpacingItemDecoration;
 import com.project.searchproducts.adapters.IOnCheckedFavorite;
@@ -28,8 +29,11 @@ import com.project.searchproducts.viewmodels.IOnClickListenerTag;
 import com.project.searchproducts.viewmodels.ProductsViewModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static com.project.searchproducts.utils.Helper.getIdFromLink;
+import static com.project.searchproducts.utils.Helper.getPriceRange;
+import static com.project.searchproducts.utils.Helper.makeSnackBar;
 
 public class SearchActivity extends AppCompatActivity implements IOnClickListenerTag,
         IOnClickListener,
@@ -44,11 +48,19 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     private PopUpWindowSort popUpWindowSort;
     private List<SeoLinks> seoLinks;
     private SortType sortType = SortType.SCORE;
+    private String searchTerm = "";
     private String minPrice = "";
     private String maxPrice = "";
     private int page = 1;
     private List<Double> priceRange = new ArrayList<>();
 
+    /**
+     * Створює об'єкт ProductsViewModel для завантаження товарів.
+     * Створює об'єкти PopUpWindowPrice та PopUpWindowSort для фільтрів.
+     * Ініціалізує список та теги.
+     *
+     * @param savedInstanceState
+     */
     @SuppressLint({"ResourceAsColor", "SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +68,8 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         searchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search);
         productsViewModel = ViewModelProviders.of(this).get(ProductsViewModel.class);
         favoriteProductViewModel = ViewModelProviders.of(this).get(FavoriteProductViewModel.class);
+        NetDetect.init(this);
+
         searchBinding.setViewModel(productsViewModel);
         searchBinding.setLifecycleOwner(this);
         productsViewModel.setOnClickListenerTag(this);
@@ -65,13 +79,21 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
 
         productAdapter = new ProductAdapter();
         productAdapter.setOnClickListener(this);
+        productAdapter.setOnCheckedFavorite(this);
         searchBinding.recyclerViewMain.setLayoutManager(new GridLayoutManager(this, 2));
         searchBinding.recyclerViewMain.addItemDecoration(
                 new GridSpacingItemDecoration(2, 40, false));
         searchBinding.recyclerViewMain.setAdapter(productAdapter);
 
         searchBinding.headerView.searchButton.setOnClickListener(v ->
-                loadWithFilters(sortType, minPrice, maxPrice)
+                NetDetect.check((isConnected -> {
+                    if (!isConnected) {
+                        makeSnackBar(v);
+                    } else {
+                        searchTerm = searchBinding.headerView.searchEditText.getText().toString();
+                        loadWithFilters(searchTerm, sortType, minPrice, maxPrice);
+                    }
+                }))
         );
 
         searchBinding.headerView.likesButton.setOnClickListener(v ->
@@ -92,14 +114,15 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
             popUpWindowSort.setCurrentType(this.sortType);
             popUpWindowSort.setIOnClickPopUpWindow(this);
         });
-
-        productAdapter.setOnCheckedFavorite(this);
     }
 
+    /**
+     * Заватажує наступну сторінку
+     */
     private void loadNextPage() {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
         page++;
-        SearchData searchData = new SearchData("JBL", minPrice,
+        SearchData searchData = new SearchData(searchTerm, minPrice,
                 maxPrice, sortType, Integer.toString(page));
         productsViewModel.search(searchData);
 
@@ -111,9 +134,17 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         });
     }
 
-    private void loadWithFilters(SortType sortBy, String minPrice, String maxPrice) {
+    /**
+     * Завантажує результат пошука з сортуванням та діапазоном цін
+     *
+     * @param searchTerm
+     * @param sortBy
+     * @param minPrice
+     * @param maxPrice
+     */
+    private void loadWithFilters(String searchTerm, SortType sortBy, String minPrice, String maxPrice) {
+        if (searchTerm.equals("")) return;
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
-        String searchTerm = "JBL";
         this.sortType = sortBy;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
@@ -132,20 +163,10 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         });
     }
 
-    private List<Double> getPriceRange(List<Product> products) {
-        List<Double> priceRange = new ArrayList<>();
-        List<Double> prices = new ArrayList<>();
-
-        for (Product product : products) {
-            prices.add(Double.parseDouble(product.getPrice().replace(" грн.", "")));
-        }
-
-        priceRange.add(Collections.min(prices));
-        priceRange.add(Collections.max(prices));
-
-        return priceRange;
-    }
-
+    /**
+     * Перехід на скрін з детальною інформацією
+     * @param product
+     */
     @Override
     public void onClick(Product product) {
         Intent intent = new Intent(SearchActivity.this, DetailsActivity.class);
@@ -154,6 +175,11 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         startActivity(intent);
     }
 
+
+    /**
+     * Заватаження по тегу
+     * @param id
+     */
     @Override
     public void OnClickTag(int id) {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
@@ -170,27 +196,41 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         });
     }
 
+    /**
+     * Заватаження з діапазоном цін
+     * @param minPrice
+     * @param maxPrice
+     */
     @Override
     public void onClickPopUpWindow(String minPrice, String maxPrice) {
-        loadWithFilters(sortType, minPrice, maxPrice);
+        loadWithFilters(searchTerm, sortType, minPrice, maxPrice);
     }
 
+    /**
+     * Заватаження з сортуванням
+     * @param sortBy
+     */
     @Override
     public void onClickPopUpWindow(SortType sortBy) {
-        loadWithFilters(sortBy, minPrice, maxPrice);
+        loadWithFilters(searchTerm, sortBy, minPrice, maxPrice);
     }
 
+    /**
+     * Зберігає або видаляє з бази даних улюблених товарів
+     * @param isCheck
+     * @param position
+     */
     @Override
     public void onChecked(boolean isCheck, int position) {
         Product product = productAdapter.getProducts().get(position);
         int id = getIdFromLink(product.getDetailsLink());
-        System.out.println("isCheck = " + isCheck);
         if (isCheck) {
             ProductFavorite productFavorite = new ProductFavorite(
                     id,
                     product.getTitle(),
                     product.getPrice(),
-                    product.getPresence()
+                    product.getPresence(),
+                    product.getDetailsLink()
             );
             favoriteProductViewModel.insertFavouriteProduct(productFavorite);
         } else {
@@ -198,9 +238,7 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         }
     }
 
-    private int getIdFromLink(String link) {
-        String idStr = link.split("-")[0].replaceAll("[^0-9]", "");
-
-        return Integer.parseInt(idStr);
+    @Override
+    public void onClick(Product product, View view) {
     }
 }

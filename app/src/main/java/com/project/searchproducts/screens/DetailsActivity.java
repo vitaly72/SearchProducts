@@ -18,6 +18,10 @@ import com.project.searchproducts.utils.JSONUtils;
 import com.project.searchproducts.viewmodels.ProductsViewModel;
 
 public class DetailsActivity extends AppCompatActivity {
+    /**
+     * Отримує об'єкт класу Product та виконує запит для детальної інформації
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +35,9 @@ public class DetailsActivity extends AppCompatActivity {
         String movieJsonString = intent.getStringExtra(Constants.INTENT_KEY);
         Product product = JSONUtils.getGsonParser().fromJson(movieJsonString, Product.class);
         productBinding.setProduct(product);
+
         System.out.println("detail link = " + product.getDetailsLink());
+
         productBinding.textViewOpenBrowser.setOnClickListener(v -> {
             String link = Constants.BASE.URL + product.getDetailsLink().replace("/ua", "ua").split("\\?token")[0];
             System.out.println("link = " + link);

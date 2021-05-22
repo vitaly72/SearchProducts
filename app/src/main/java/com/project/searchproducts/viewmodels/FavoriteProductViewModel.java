@@ -23,6 +23,11 @@ public class FavoriteProductViewModel extends AndroidViewModel {
         favouriteProducts = database.movieDao().getAllFavouriteProducts();
     }
 
+    /**
+     * Повертає улюблений товар з бази даних по його індексу
+     * @param id
+     * @return
+     */
     public ProductFavorite getFavouriteProductByID(int id) {
         try {
             return new GetFavouriteProductTask().execute(id).get();
@@ -32,20 +37,50 @@ public class FavoriteProductViewModel extends AndroidViewModel {
         return null;
     }
 
+    /**
+     * Повертає список улюблених товарів
+     * @return
+     */
     public LiveData<List<ProductFavorite>> getFavouriteProducts() {
         return favouriteProducts;
     }
 
+    /**
+     * Додає улюблений товар в базу даних
+     * @param productFavorite
+     */
     public void insertFavouriteProduct(ProductFavorite productFavorite) {
         new InsertFavouriteProductsTask().execute(productFavorite);
     }
 
+    /**
+     * Видаляє улюблений товар з бази даних
+     * @param productFavorite
+     */
     public void deleteFavouriteProduct(ProductFavorite productFavorite) {
         new DeleteFavouriteProductsTask().execute(productFavorite);
     }
 
+    /**
+     * Видаляє улюблений товар з бази даних по його індексу
+     * @param id
+     */
     public void deleteFavouriteProduct(int id) {
         new DeleteFavouriteProductsByIDTask().execute(id);
+    }
+
+    /**
+     * Перевіряє чи є улюблений товар в базі даних по його індексу
+     * @param id
+     * @return
+     */
+    public Boolean isExist(int id) {
+        try {
+            return new IsExistTask().execute(id).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private static class DeleteFavouriteProductsTask extends AsyncTask<ProductFavorite, Void, Void> {
@@ -63,6 +98,16 @@ public class FavoriteProductViewModel extends AndroidViewModel {
         protected Void doInBackground(Integer... integers) {
             if (integers != null && integers.length > 0) {
                 database.movieDao().deleteFavouriteProductById(integers[0]);
+            }
+            return null;
+        }
+    }
+
+    private static class IsExistTask extends AsyncTask<Integer, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Integer... integers) {
+            if (integers != null && integers.length > 0) {
+                return database.movieDao().isExist(integers[0]);
             }
             return null;
         }

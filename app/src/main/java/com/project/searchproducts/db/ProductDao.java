@@ -25,6 +25,9 @@ public interface ProductDao {
     @Query("DELETE FROM favourite_products WHERE id = :id")
     void deleteFavouriteProductById(int id);
 
+    @Query("SELECT EXISTS(SELECT * FROM favourite_products WHERE id = :id)")
+    Boolean isExist(int id);
+
     @Delete
     void deleteFavouriteProduct(ProductFavorite favouriteProduct);
 }

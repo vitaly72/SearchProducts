@@ -11,16 +11,18 @@ public class ProductFavorite {
     public String title;
     public String price;
     public String presence;
+    public String detailsLink;
 
     public ProductFavorite() {
     }
 
     @Ignore
-    public ProductFavorite(int id, String title, String price, String presence) {
+    public ProductFavorite(int id, String title, String price, String presence, String detailsLink) {
         this.id = id;
         this.title = title;
         this.price = price;
         this.presence = presence;
+        this.detailsLink = detailsLink;
     }
 
     public int getId() {
@@ -53,5 +55,13 @@ public class ProductFavorite {
 
     public void setPresence(String presence) {
         this.presence = presence;
+    }
+
+    public String getDetailsLink() {
+        return detailsLink;
+    }
+
+    public void setDetailsLink(String detailsLink) {
+        this.detailsLink = detailsLink;
     }
 }

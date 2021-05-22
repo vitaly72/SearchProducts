@@ -18,10 +18,10 @@ public class NetworkService {
             .client(okHttpClient)
             .build();
 
-    public static <T> T createService(Class<T> serviceClass) {
-        return retrofit.create(serviceClass);
-    }
-
+    /**
+     * Повертає об'єкт класу INetworkApi для запитів
+     * @return
+     */
     public static INetworkApi createService() {
         return retrofit.create(INetworkApi.class);
     }

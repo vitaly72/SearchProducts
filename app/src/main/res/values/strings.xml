@@ -14,6 +14,8 @@
     <string name="priceRange">Діапазон цін, грн.</string>
     <string name="_0">0</string>
     <string name="ok">OK</string>
+    <string name="grn"> грн.</string>
+    <string name="noConnect">Відсутнє підключення до інтернету</string>
     <string name="sortby">Сортування</string>
     <string name="byScore">За рейтингом</string>
     <string name="byMinPrice">Дешевше</string>

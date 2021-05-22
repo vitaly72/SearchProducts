@@ -1,7 +1,10 @@
 package com.project.searchproducts.network;
 
+import android.content.res.Resources;
+
 import androidx.lifecycle.MutableLiveData;
 
+import com.project.searchproducts.R;
 import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.ProductDetails;
 import com.project.searchproducts.models.SearchData;
@@ -31,11 +34,20 @@ public class NetworkRepository {
     private NetworkRepository() {
     }
 
+    /**
+     * Сторює або повертає об'єкт класу
+     * @return
+     */
     public static NetworkRepository getInstance() {
         if (instance == null) instance = new NetworkRepository();
         return instance;
     }
 
+    /**
+     * Виконує запит для пошуку
+     * @param searchData
+     * @return
+     */
     public MutableLiveData<List<Product>> searchProducts(SearchData searchData) {
         MutableLiveData<List<Product>> data = new MutableLiveData<>();
         NetworkService.createService()
@@ -62,6 +74,11 @@ public class NetworkRepository {
         return data;
     }
 
+    /**
+     * Виконує запит для пошуку по тегам
+     * @param tag
+     * @return
+     */
     public MutableLiveData<List<Product>> searchProductByTag(String tag) {
         MutableLiveData<List<Product>> data = new MutableLiveData<>();
         String tagLink = tag.replace("/ua/", "");
@@ -89,6 +106,11 @@ public class NetworkRepository {
         return data;
     }
 
+    /**
+     * Виконує запит для детальної інформації товару
+     * @param productId
+     * @return
+     */
     public MutableLiveData<ProductDetails> detailsProduct(String productId) {
         MutableLiveData<ProductDetails> data = new MutableLiveData<>();
         String product = productId.replace("/ua/", "").split("\\?token")[0];
@@ -101,39 +123,15 @@ public class NetworkRepository {
                         if (response.isSuccessful() && response.body() != null) {
                             Document document = Jsoup.parse(response.body());
                             Elements imageLinks = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.IMAGES_LINKS);
-                            Elements characteristicName = document.getElementsByClass(CLASSES.CHARACTERISTIC_NAME);
-                            Elements characteristicValue = document.getElementsByClass(CLASSES.CHARACTERISTIC_VALUE);
                             Elements descriptions = document.getElementsByAttributeValue(KEYS.DATA_QAID, CLASSES.DESCRIPTIONS);
-                            String divClass = "ek-box ek-box_padding-bottom_s ek-box_margin-bottom_s ek-box_border-bottom_black-40";
-//                            Elements div = document.select("div" + divClass + "::after");
-//                            System.out.println(div.first().toString());
 
-                            System.out.println("imageLinks.size() = " + imageLinks.size());
                             List<String> links = new ArrayList<>();
                             HashMap<String, String> characteristic = new HashMap<>();
 
-                            System.out.println("characteristicName = " + characteristicName.size());
-                            System.out.println("characteristicValue = " + characteristicValue.size());
-
-                            List<TextNode> textNodes = descriptions.get(0).textNodes();
-
-                            for (TextNode node : textNodes) {
-                                System.out.println("node.text() = " + node.text());
-                            }
-
-
                             for (Element element : imageLinks) {
                                 links.add(element.attr("src"));
-//                                System.out.println("link: " + element.attr("src"));
                             }
 
-                            for (int i = 0; i < characteristicName.size(); i++) {
-//                                System.out.println("characteristicName.get(i) = " + characteristicName.get(i).text());
-//                                System.out.println("characteristicName.get(i) = " + characteristicValue.get(i).text());
-                                characteristic.put(
-                                        characteristicName.get(i).text(),
-                                        characteristicValue.get(i).text());
-                            }
                             ProductDetails productDetails = new ProductDetails(product, links, characteristic, descriptions.text());
                             data.setValue(productDetails);
                         }
@@ -154,18 +152,21 @@ public class NetworkRepository {
         return parseProducts(document);
     }
 
+    /**
+     * Парсинг результатів запиту
+     * @param document
+     * @return
+     */
     public List<Product> parseProducts(Document document) {
         List<Product> products = new ArrayList<>();
         List<SeoLinks> seoLinks = new ArrayList<>();
 
         Elements links = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_LINK);
-//        Elements titles = document.getElementsByClass(CLASSES.TITLES);
         Elements prices = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRICE);
         Elements presences = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.PRODUCT_PRESENCE);
         Elements images = document.getElementsByClass(CLASSES.IMAGES);
         Elements tags = document.getElementsByAttributeValue(KEYS.DATA_QAID, VALUES.SEO_LINKS);
 
-//        System.out.println("titles = " + titles.size());
         System.out.println("prices = " + prices.size());
         System.out.println("presences = " + presences.size());
         System.out.println("images = " + images.size());
@@ -182,7 +183,7 @@ public class NetworkRepository {
             try {
                 product = new Product(links.get(i).attr("title"),
                         images.get(i).absUrl("src"),
-                        prices.get(i).attr("data-qaprice") + " грн.",
+                        prices.get(i).attr("data-qaprice") + Resources.getSystem().getString(R.string.grn),
                         0,
                         presences.get(i).text(),
                         links.get(i).attr("href"),
@@ -192,7 +193,6 @@ public class NetworkRepository {
             }
             products.add(product);
         }
-        System.out.println("NetworkRepository.parseProducts");
         System.out.println("products = " + products.size());
 
         return products;

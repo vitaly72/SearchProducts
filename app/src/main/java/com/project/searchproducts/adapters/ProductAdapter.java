@@ -19,9 +19,7 @@ import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private IOnClickListener onClickListener;
-
     private IOnCheckedFavorite onCheckedFavorite;
-
     private List<Product> products;
 
     public ProductAdapter() {
@@ -61,6 +59,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
+
         private final ProductItemBinding productItemBinding;
 
         public ProductViewHolder(@NonNull View itemView) {
@@ -80,7 +79,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     (v, isChecked) -> onCheckedFavorite.onChecked(isChecked, getAdapterPosition())
             );
         }
-
     }
 
     @BindingAdapter("bind:imageUrl")

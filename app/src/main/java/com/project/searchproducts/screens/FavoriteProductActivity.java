@@ -1,35 +1,44 @@
 package com.project.searchproducts.screens;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.narify.netdetect.NetDetect;
 import com.project.searchproducts.R;
 import com.project.searchproducts.adapters.FavoriteProductAdapter;
-import com.project.searchproducts.adapters.GridSpacingItemDecoration;
 import com.project.searchproducts.adapters.IOnCheckedFavorite;
-import com.project.searchproducts.adapters.ProductAdapter;
+import com.project.searchproducts.adapters.IOnClickListener;
 import com.project.searchproducts.databinding.ActivityFavoriteProductBinding;
+import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.ProductFavorite;
+import com.project.searchproducts.utils.Constants;
+import com.project.searchproducts.utils.JSONUtils;
 import com.project.searchproducts.viewmodels.FavoriteProductViewModel;
-import com.project.searchproducts.viewmodels.ProductsViewModel;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class FavoriteProductActivity extends AppCompatActivity implements IOnCheckedFavorite {
+import static com.project.searchproducts.utils.Helper.makeSnackBar;
+
+public class FavoriteProductActivity extends AppCompatActivity implements
+        IOnCheckedFavorite,
+        IOnClickListener {
     private FavoriteProductViewModel viewModel;
     private List<ProductFavorite> productFavorites;
 
+    /**
+     * Створює об'єкт FavoriteProductViewModel для завантаження улюьлених товарів з бази даних.
+     * Ініціалізує список улюблених товарів.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +48,7 @@ public class FavoriteProductActivity extends AppCompatActivity implements IOnChe
                 .of(this)
                 .get(FavoriteProductViewModel.class);
         binding.setLifecycleOwner(this);
+        NetDetect.init(this);
 
         FavoriteProductAdapter adapter = new FavoriteProductAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -59,6 +69,7 @@ public class FavoriteProductActivity extends AppCompatActivity implements IOnChe
         });
         binding.recyclerViewFavorite.setAdapter(adapter);
         adapter.setOnCheckedFavorite(this);
+        adapter.setOnClickListener(this);
 
         viewModel.getFavouriteProducts().observe(this, list -> {
             System.out.println("ProductFavorite list = " + list.size());
@@ -69,8 +80,25 @@ public class FavoriteProductActivity extends AppCompatActivity implements IOnChe
 
     @Override
     public void onChecked(boolean isFavoriteMovie, int position) {
-        System.out.println("DetailActivity.onClickChangeFavourite " + isFavoriteMovie);
-
         viewModel.deleteFavouriteProduct(productFavorites.get(position));
+    }
+
+    @Override
+    public void onClick(Product product) {
+
+    }
+
+    @Override
+    public void onClick(Product product, View view) {
+        NetDetect.check((isConnected -> {
+            if (!isConnected) {
+                makeSnackBar(view);
+            } else {
+                Intent intent = new Intent(FavoriteProductActivity.this, DetailsActivity.class);
+                String movieJsonString = JSONUtils.getGsonParser().toJson(product);
+                intent.putExtra(Constants.INTENT_KEY, movieJsonString);
+                startActivity(intent);
+            }
+        }));
     }
 }

@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.searchproducts.databinding.FavoriteProductItemBinding;
-import com.project.searchproducts.databinding.ProductItemBinding;
+import com.project.searchproducts.models.Product;
 import com.project.searchproducts.models.ProductFavorite;
 
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ import java.util.List;
 public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProductAdapter.ProductViewHolder> {
     private List<ProductFavorite> products;
     private IOnCheckedFavorite onCheckedFavorite;
+
+    private IOnClickListener onClickListener;
 
     public FavoriteProductAdapter() {
         products = new ArrayList<>();
@@ -42,21 +44,31 @@ public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProduct
         return products == null ? 0 : products.size();
     }
 
-    public List<ProductFavorite> getProducts() {
-        return products;
-    }
-
     public void setProducts(List<ProductFavorite> products) {
         this.products = products;
         notifyDataSetChanged();
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
+
         private final FavoriteProductItemBinding itemBinding;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             itemBinding = DataBindingUtil.bind(itemView);
+            itemView.setOnClickListener(v -> {
+                ProductFavorite productFavorite = products.get(getAdapterPosition());
+                Product product = new Product(
+                        productFavorite.getTitle(),
+                        "",
+                        productFavorite.getPrice(),
+                        0,
+                        "",
+                        productFavorite.getDetailsLink(),
+                        new ArrayList<>()
+                );
+                onClickListener.onClick(product, v);
+            });
         }
 
         public void bind(ProductFavorite product) {
@@ -66,7 +78,6 @@ public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProduct
                     (buttonView, isChecked) -> onCheckedFavorite.onChecked(isChecked, getAdapterPosition())
             );
         }
-
     }
 
     public void clear() {
@@ -76,5 +87,9 @@ public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProduct
 
     public void setOnCheckedFavorite(IOnCheckedFavorite onCheckedFavorite) {
         this.onCheckedFavorite = onCheckedFavorite;
+    }
+
+    public void setOnClickListener(IOnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
     }
 }

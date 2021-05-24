@@ -3,7 +3,10 @@ package com.project.searchproducts.screens;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -114,6 +117,21 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
             popUpWindowSort.setCurrentType(this.sortType);
             popUpWindowSort.setIOnClickPopUpWindow(this);
         });
+
+        searchBinding.headerView.searchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+                    || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                NetDetect.check((isConnected -> {
+                    if (!isConnected) {
+                        makeSnackBar(v);
+                    } else {
+                        searchTerm = searchBinding.headerView.searchEditText.getText().toString();
+                        loadWithFilters(searchTerm, sortType, minPrice, maxPrice);
+                    }
+                }));
+            }
+            return false;
+        });
     }
 
     /**
@@ -183,12 +201,15 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     @Override
     public void OnClickTag(int id) {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
+        searchBinding.mainScrollView.setVisibility(View.GONE);
         productsViewModel.searchByTag(seoLinks.get(id).getLink());
         productAdapter.clear();
         seoLinks.clear();
 
         productsViewModel.getProductsData().observe(this, products -> {
             searchBinding.progressIndicator.setVisibility(View.GONE);
+            searchBinding.mainScrollView.setVisibility(View.VISIBLE);
+
             seoLinks = products.get(0).getSeoLinks();
             searchBinding.tagsViewGroup.setTags(seoLinks);
 

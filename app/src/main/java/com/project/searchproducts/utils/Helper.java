@@ -34,7 +34,7 @@ public class Helper {
 
         for (Product product : products) {
             prices.add(Double.parseDouble(product.getPrice().replace
-                    (Resources.getSystem().getString(R.string.grn), "")));
+                    (" грн.", "")));
         }
 
         priceRange.add(Collections.min(prices));
@@ -48,7 +48,7 @@ public class Helper {
      * @param view
      */
     public static void makeSnackBar(View view) {
-        Snackbar.make(view, Resources.getSystem().getString(R.string.noConnect), Snackbar.LENGTH_LONG)
+        Snackbar.make(view, "Відсутнє підключення до інтернету", Snackbar.LENGTH_LONG)
                 .show();
     }
 }

@@ -183,7 +183,7 @@ public class NetworkRepository {
             try {
                 product = new Product(links.get(i).attr("title"),
                         images.get(i).absUrl("src"),
-                        prices.get(i).attr("data-qaprice") + Resources.getSystem().getString(R.string.grn),
+                        prices.get(i).attr("data-qaprice") + " грн.",
                         0,
                         presences.get(i).text(),
                         links.get(i).attr("href"),

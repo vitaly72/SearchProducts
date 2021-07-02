@@ -29,15 +29,15 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import static com.project.searchproducts.utils.Parser.parseDetails;
 import static com.project.searchproducts.utils.Parser.parseProducts;
 
 @HiltViewModel
 public class ProductsViewModel extends ViewModel implements Observable, ISearchProducts {
     private final NetworkRepository networkRepository;
-    private IOnClickListenerTag OnClickListenerTag;
-    private MutableLiveData<List<Product>> productsData;
-    private MutableLiveData<ProductDetails> productsDetailsData;
-    public ObservableField<List<SeoLinks>> seoLinks = new ObservableField<>();
+    private IOnClickListenerTag onClickListenerTag;
+    private MutableLiveData<List<Product>> productsData = new MutableLiveData<>();
+    private MutableLiveData<ProductDetails> productsDetailsData = new MutableLiveData<>();
 
     @Inject
     public ProductsViewModel(NetworkRepository networkRepository) {
@@ -47,18 +47,30 @@ public class ProductsViewModel extends ViewModel implements Observable, ISearchP
     @Override
     public void search(SearchData searchData) {
         networkRepository.searchProducts(searchData)
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(value -> productsData.setValue(parseProducts(value)));
+                .map(Parser::parseProducts)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> productsData.setValue(result),
+                        error -> System.out.println("error: " + error.getMessage()));
     }
 
     @Override
     public void searchByTag(String tag) {
-
+        networkRepository.searchProductByTag(tag)
+                .subscribeOn(Schedulers.io())
+                .map(Parser::parseProducts)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> productsData.setValue(result),
+                        error -> System.out.println("error: " + error.getMessage()));
     }
 
     public void detailsProduct(String productId) {
-
+        networkRepository.detailsProduct(productId)
+                .subscribeOn(Schedulers.io())
+                .map(response -> parseDetails(response, productId))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> productsDetailsData.setValue(result),
+                        error -> System.out.println("error: " + error.getMessage()));
     }
 
     public MutableLiveData<List<Product>> getProductsData() {
@@ -69,12 +81,12 @@ public class ProductsViewModel extends ViewModel implements Observable, ISearchP
         return productsDetailsData;
     }
 
-    public void setOnClickListenerTag(IOnClickListenerTag OnClickListenerTag) {
-        this.OnClickListenerTag = OnClickListenerTag;
+    public void setOnClickListenerTag(IOnClickListenerTag onClickListenerTag) {
+        this.onClickListenerTag = onClickListenerTag;
     }
 
     public IOnClickListenerTag getOnClickListenerTag() {
-        return this.OnClickListenerTag;
+        return this.onClickListenerTag;
     }
 
     @Override

@@ -19,7 +19,6 @@ import java.util.List;
 public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProductAdapter.ProductViewHolder> {
     private List<ProductFavorite> products;
     private IOnCheckedFavorite onCheckedFavorite;
-
     private IOnClickListener onClickListener;
 
     public FavoriteProductAdapter() {
@@ -31,6 +30,7 @@ public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProduct
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         FavoriteProductItemBinding productItemBinding = FavoriteProductItemBinding.inflate(layoutInflater);
+
         return new ProductViewHolder(productItemBinding.getRoot());
     }
 
@@ -51,7 +51,6 @@ public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProduct
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
-
         private final FavoriteProductItemBinding itemBinding;
 
         public ProductViewHolder(@NonNull View itemView) {
@@ -68,6 +67,7 @@ public class FavoriteProductAdapter extends RecyclerView.Adapter<FavoriteProduct
                         productFavorite.getDetailsLink(),
                         new ArrayList<>()
                 );
+                System.out.println("ProductViewHolder.ProductViewHolder.click");
                 onClickListener.onClick(product, v);
             });
         }

@@ -49,7 +49,6 @@ public class Parser {
                 Constants.ATTRIBUTES.VALUES.SEO_LINKS);
 
         for (Element item : tags) {
-            System.out.println("tags: " + item.text() + " " + item.attr("href"));
             seoLinks.add(new SeoLinks(item.text(), item.attr("href")));
         }
 

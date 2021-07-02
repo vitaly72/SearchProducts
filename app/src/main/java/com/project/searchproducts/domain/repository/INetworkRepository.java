@@ -2,12 +2,12 @@ package com.project.searchproducts.domain.repository;
 
 import com.project.searchproducts.domain.models.SearchData;
 
-import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.Observable;
 
 public interface INetworkRepository {
-    Single<String> searchProducts(SearchData searchData);
+    Observable<String> searchProducts(SearchData searchData);
 
-    Single<String> searchProductByTag(String tag);
+    Observable<String> searchProductByTag(String tag);
 
-    Single<String> detailsProduct(String productId);
+    Observable<String> detailsProduct(String productId);
 }

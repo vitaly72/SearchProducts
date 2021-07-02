@@ -14,6 +14,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -23,7 +24,7 @@ public class NetworkModule {
     public static INetworkApi provideINetworkApi(OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
                 .baseUrl(Constants.BASE.URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build()

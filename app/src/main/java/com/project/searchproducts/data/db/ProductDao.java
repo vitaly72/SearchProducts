@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.project.searchproducts.domain.models.ProductFavorite;
@@ -18,7 +19,7 @@ public interface ProductDao {
     @Query("SELECT * FROM favourite_products WHERE id == :id")
     ProductFavorite getFavouriteProductById(int id);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFavouriteProduct(ProductFavorite favouriteProduct);
 
     @Query("DELETE FROM favourite_products WHERE id = :id")

@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,24 +25,41 @@ import com.project.searchproducts.utils.JSONUtils;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 import static com.project.searchproducts.utils.Helper.makeSnackBar;
 
+@AndroidEntryPoint
 public class FavoriteProductActivity extends AppCompatActivity implements
         IOnCheckedFavorite,
         IOnClickListener {
+    private ActivityFavoriteProductBinding binding;
+    private FavoriteProductAdapter adapter;
     private FavoriteProductViewModel viewModel;
     private List<ProductFavorite> productFavorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityFavoriteProductBinding binding =
-                DataBindingUtil.setContentView(this, R.layout.activity_favorite_product);
-        viewModel = ViewModelProviders.of(this).get(FavoriteProductViewModel.class);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_favorite_product);
         binding.setLifecycleOwner(this);
-        NetDetect.init(this);
 
-        FavoriteProductAdapter adapter = new FavoriteProductAdapter();
+        viewModel = new ViewModelProvider(this).get(FavoriteProductViewModel.class);
+
+        NetDetect.init(this);
+        initRecyclerView();
+
+        adapter.setOnCheckedFavorite(this);
+        adapter.setOnClickListener(this);
+
+        viewModel.getFavouriteProducts().observe(this, list -> {
+            productFavorites = list;
+            adapter.setProducts(list);
+        });
+    }
+
+    private void initRecyclerView() {
+        adapter = new FavoriteProductAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
@@ -59,14 +77,6 @@ public class FavoriteProductActivity extends AppCompatActivity implements
             }
         });
         binding.recyclerViewFavorite.setAdapter(adapter);
-        adapter.setOnCheckedFavorite(this);
-        adapter.setOnClickListener(this);
-
-        viewModel.getFavouriteProducts().observe(this, list -> {
-            System.out.println("ProductFavorite list = " + list.size());
-            productFavorites = list;
-            adapter.setProducts(list);
-        });
     }
 
     @Override
@@ -76,7 +86,6 @@ public class FavoriteProductActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(Product product) {
-
     }
 
     @Override
@@ -85,6 +94,7 @@ public class FavoriteProductActivity extends AppCompatActivity implements
             if (!isConnected) {
                 makeSnackBar(view);
             } else {
+                System.out.println("FavoriteProductActivity.onClick");
                 Intent intent = new Intent(FavoriteProductActivity.this, DetailsActivity.class);
                 String movieJsonString = JSONUtils.getGsonParser().toJson(product);
                 intent.putExtra(Constants.INTENT_KEY, movieJsonString);

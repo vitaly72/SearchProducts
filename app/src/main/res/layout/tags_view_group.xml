@@ -1,20 +1,22 @@
-<!--<layout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:tools="http://schemas.android.com/tools">-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-<!--    <data>-->
-<!--        <import type="java.util.List"/>-->
-<!--        <import type="com.project.searchproducts.domain.models.SeoLinks"/>-->
-<!--        <variable-->
-<!--            name="tags"-->
-<!--            type="com.project.searchproducts.domain.models.SeoLinks"/>-->
-<!--        <variable-->
-<!--            name="IOnClick"-->
-<!--            type="com.project.searchproducts.presentation.home.IOnClickListenerTag" />-->
-<!--    </data>-->
+    <data>
+
+        <import type="java.util.List" />
+
+        <import type="com.project.searchproducts.domain.models.SeoLinks" />
+
+        <variable
+            name="tags"
+            type="List&lt;com.project.searchproducts.domain.models.SeoLinks>" />
+
+        <variable
+            name="IOnClick"
+            type="com.project.searchproducts.presentation.home.IOnClickListenerTag" />
+    </data>
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/tagsGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,9 +38,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/tags_background"
+                    android:onClick="@{() -> IOnClick.OnClickTag(0)}"
                     android:padding="10dp"
                     android:text="@{tags.get(0).title}"
-                    android:onClick="@{() -> IOnClick.OnClickTag(0)}"
                     android:textColor="@color/green"
                     android:textStyle="bold" />
 
@@ -47,10 +49,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@{tags.get(1).title}"
-                    android:onClick="@{() -> IOnClick.OnClickTag(1)}"
                     android:background="@drawable/tags_background"
+                    android:onClick="@{() -> IOnClick.OnClickTag(1)}"
                     android:padding="10dp"
+                    android:text="@{tags.get(1).title}"
                     android:textColor="@color/green"
                     android:textStyle="bold" />
 
@@ -59,10 +61,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@{tags.get(2).title}"
-                    android:onClick="@{() -> IOnClick.OnClickTag(2)}"
                     android:background="@drawable/tags_background"
+                    android:onClick="@{() -> IOnClick.OnClickTag(2)}"
                     android:padding="10dp"
+                    android:text="@{tags.get(2).title}"
                     android:textColor="@color/green"
                     android:textStyle="bold" />
 
@@ -71,10 +73,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@{tags.get(3).title}"
-                    android:onClick="@{() -> IOnClick.OnClickTag(3)}"
                     android:background="@drawable/tags_background"
+                    android:onClick="@{() -> IOnClick.OnClickTag(3)}"
                     android:padding="10dp"
+                    android:text="@{tags.get(3).title}"
                     android:textColor="@color/green"
                     android:textStyle="bold" />
 
@@ -83,13 +85,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@{tags.get(4).title}"
-                    android:onClick="@{() -> IOnClick.OnClickTag(4)}"
                     android:background="@drawable/tags_background"
+                    android:onClick="@{() -> IOnClick.OnClickTag(4)}"
                     android:padding="10dp"
+                    android:text="@{tags.get(4).title}"
                     android:textColor="@color/green"
                     android:textStyle="bold" />
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
-<!--</layout>-->
+</layout>

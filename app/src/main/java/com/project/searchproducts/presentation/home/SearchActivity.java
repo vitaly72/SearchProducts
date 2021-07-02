@@ -1,16 +1,18 @@
 package com.project.searchproducts.presentation.home;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.narify.netdetect.NetDetect;
@@ -47,17 +49,17 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         IOnCheckedFavorite,
         IOnClickPopUpWindowPrice,
         IOnClickPopUpWindowSort {
+
     private ProductsViewModel productsViewModel;
     private FavoriteProductViewModel favoriteProductViewModel;
     private ActivitySearchBinding searchBinding;
     private ProductAdapter productAdapter;
-    private PopUpWindowPrice popUpWindowPrice = new PopUpWindowPrice();
-    private PopUpWindowSort popUpWindowSort = new PopUpWindowSort();
+    private final PopUpWindowPrice popUpWindowPrice = new PopUpWindowPrice();
+    private final PopUpWindowSort popUpWindowSort = new PopUpWindowSort();
+
     private List<SeoLinks> seoLinks;
     private SortType sortType = SortType.SCORE;
-    private String searchTerm = "";
-    private String minPrice = "";
-    private String maxPrice = "";
+    private SearchData searchData = null;
     private int page = 1;
     private List<Double> priceRange = new ArrayList<>();
 
@@ -74,65 +76,103 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         searchBinding.setLifecycleOwner(this);
         productsViewModel.setOnClickListenerTag(this);
 
-        productAdapter = new ProductAdapter();
+        initRecyclerView();
         productAdapter.setOnClickListener(this);
         productAdapter.setOnCheckedFavorite(this);
-        searchBinding.recyclerViewMain.setLayoutManager(new GridLayoutManager(this, 2));
-        searchBinding.recyclerViewMain.addItemDecoration(
-                new GridSpacingItemDecoration(2, 40, false));
-        searchBinding.recyclerViewMain.setAdapter(productAdapter);
 
-        searchBinding.headerView.searchButton.setOnClickListener(v ->
-                NetDetect.check((isConnected -> {
-                    if (!isConnected) {
-                        makeSnackBar(v);
-                    } else {
-                        searchTerm = searchBinding.headerView.searchEditText.getText().toString();
-                        loadWithFilters(searchTerm, sortType, minPrice, maxPrice);
-                    }
-                }))
-        );
+        searchBinding.headerView.searchButton.setOnClickListener(this::searchButtonOnClickListener);
 
         searchBinding.headerView.likesButton.setOnClickListener(v ->
                 startActivity(new Intent(SearchActivity.this, FavoriteProductActivity.class))
         );
 
-        searchBinding.textViewLoadMore.setOnClickListener(v -> loadNextPage());
+        searchBinding.textViewLoadMore.setOnClickListener(v -> loadNextPage(searchData));
 
-        searchBinding.filtersViewGroup.pricesTextView.setOnClickListener(v -> {
-            popUpWindowPrice.showPopupWindow(v);
-            popUpWindowPrice.setIOnClickPopUpWindow(this);
-            popUpWindowPrice.setPriceRange(Double.toString(priceRange.get(0)),
-                    Double.toString(priceRange.get(1)));
-        });
-
-        searchBinding.filtersViewGroup.categoryTextView.setOnClickListener(v -> {
-            popUpWindowSort.showPopupWindow(v);
-            popUpWindowSort.setCurrentType(this.sortType);
-            popUpWindowSort.setIOnClickPopUpWindow(this);
-        });
+        searchBinding.filtersViewGroup.pricesTextView.setOnClickListener(this::pricesTextViewOnClickListener);
+        searchBinding.filtersViewGroup.categoryTextView.setOnClickListener(this::categoryTextViewOnClickListener);
 
         searchBinding.headerView.searchEditText.setOnEditorActionListener((v, actionId, event) -> {
-            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
-                    || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                NetDetect.check((isConnected -> {
-                    if (!isConnected) {
-                        makeSnackBar(v);
-                    } else {
-                        searchTerm = searchBinding.headerView.searchEditText.getText().toString();
-                        loadWithFilters(searchTerm, sortType, minPrice, maxPrice);
-                    }
-                }));
-            }
+            editTextKeyboardEnterPressEvent(v, actionId, event);
             return false;
         });
     }
 
-    private void loadNextPage() {
+    private void initRecyclerView() {
+        productAdapter = new ProductAdapter();
+        searchBinding.recyclerViewMain.setLayoutManager(new GridLayoutManager(this, 2));
+        searchBinding.recyclerViewMain.addItemDecoration(
+                new GridSpacingItemDecoration(2, 40, false));
+        searchBinding.recyclerViewMain.setAdapter(productAdapter);
+    }
+
+    private void pricesTextViewOnClickListener(View view) {
+        popUpWindowPrice.showPopupWindow(view);
+        popUpWindowPrice.setIOnClickPopUpWindow(this);
+        popUpWindowPrice.setPriceRange(
+                Double.toString(priceRange.get(0)),
+                Double.toString(priceRange.get(1))
+        );
+    }
+
+    private void categoryTextViewOnClickListener(View view) {
+        popUpWindowSort.showPopupWindow(view);
+        popUpWindowSort.setCurrentType(this.sortType);
+        popUpWindowSort.setIOnClickPopUpWindow(this);
+    }
+
+    private void searchButtonOnClickListener(View v) {
+        if (searchBinding.headerView.searchEditText.getText().toString().isEmpty()) {
+            searchBinding.headerView.searchEditText.setHintTextColor(Color.RED);
+            return;
+        }
+
+        InputMethodManager inputMethodManager = (InputMethodManager)
+                getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+        NetDetect.check((isConnected -> {
+            if (!isConnected) {
+                makeSnackBar(v);
+            } else {
+                if (searchData == null) {
+                    searchData = new SearchData(
+                            searchBinding.headerView.searchEditText.getText().toString(),
+                            "", "", sortType, ""
+                    );
+                } else {
+                    searchData.setSearchTerm(searchBinding.headerView.searchEditText.getText().toString());
+                }
+                loadWithFilters(searchData);
+            }
+        }));
+    }
+
+    private void editTextKeyboardEnterPressEvent(View v, int actionId, KeyEvent event) {
+        if ((event != null &&
+                (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                (actionId == EditorInfo.IME_ACTION_DONE)) {
+            NetDetect.check((isConnected -> {
+                if (!isConnected) {
+                    makeSnackBar(v);
+                } else {
+                    if (searchData == null) {
+                        searchData = new SearchData(
+                                searchBinding.headerView.searchEditText.getText().toString(),
+                                "", "", sortType, ""
+                        );
+                    } else {
+                        searchData.setSearchTerm(searchBinding.headerView.searchEditText.getText().toString());
+                    }
+                    loadWithFilters(searchData);
+                }
+            }));
+        }
+    }
+
+    private void loadNextPage(SearchData searchData) {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
-        page++;
-        SearchData searchData = new SearchData(searchTerm, minPrice,
-                maxPrice, sortType, Integer.toString(page));
+        searchData.nextPage();
+        searchData.setPage(Integer.toString(page));
         productsViewModel.search(searchData);
 
         productsViewModel.getProductsData().observe(this, products -> {
@@ -143,13 +183,9 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
         });
     }
 
-    private void loadWithFilters(String searchTerm, SortType sortBy, String minPrice, String maxPrice) {
-        if (searchTerm.equals("")) return;
+    private void loadWithFilters(SearchData searchData) {
+        if (searchData.getSearchTerm().equals("")) return;
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
-        this.sortType = sortBy;
-        this.minPrice = minPrice;
-        this.maxPrice = maxPrice;
-        SearchData searchData = new SearchData(searchTerm, minPrice, maxPrice, sortBy, "");
         productsViewModel.search(searchData);
 
         productsViewModel.getProductsData().observe(this, products -> {
@@ -158,7 +194,8 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
             searchBinding.mainScrollView.setVisibility(View.VISIBLE);
 
             seoLinks = products.get(0).getSeoLinks();
-//            searchBinding.tagsViewGroup.setTags(seoLinks.get(0));
+            searchBinding.tagsViewGroup.setTags(seoLinks);
+
             productAdapter.setProducts(products);
             priceRange = getPriceRange(products);
         });
@@ -167,8 +204,8 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     @Override
     public void onClick(Product product) {
         Intent intent = new Intent(SearchActivity.this, DetailsActivity.class);
-        String movieJsonString = JSONUtils.getGsonParser().toJson(product);
-        intent.putExtra(Constants.INTENT_KEY, movieJsonString);
+        String productJsonString = JSONUtils.getGsonParser().toJson(product);
+        intent.putExtra(Constants.INTENT_KEY, productJsonString);
         startActivity(intent);
     }
 
@@ -176,6 +213,7 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     public void OnClickTag(int id) {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
         searchBinding.mainScrollView.setVisibility(View.GONE);
+
         productsViewModel.searchByTag(seoLinks.get(id).getLink());
         productAdapter.clear();
         seoLinks.clear();
@@ -184,21 +222,21 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
             searchBinding.progressIndicator.setVisibility(View.GONE);
             searchBinding.mainScrollView.setVisibility(View.VISIBLE);
 
-            seoLinks = products.get(0).getSeoLinks();
-//            searchBinding.tagsViewGroup.setTags(seoLinks);
-
             productAdapter.setProducts(products);
         });
     }
 
     @Override
     public void onClickPopUpWindow(String minPrice, String maxPrice) {
-        loadWithFilters(searchTerm, sortType, minPrice, maxPrice);
+        searchData.setMinPrice(minPrice);
+        searchData.setMaxPrice(maxPrice);
+        loadWithFilters(searchData);
     }
 
     @Override
     public void onClickPopUpWindow(SortType sortBy) {
-        loadWithFilters(searchTerm, sortBy, minPrice, maxPrice);
+        searchData.setSort(sortBy);
+        loadWithFilters(searchData);
     }
 
     @Override

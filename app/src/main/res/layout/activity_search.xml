@@ -71,14 +71,14 @@
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="10dp" />
 
-<!--                    <include-->
-<!--                        android:id="@+id/tagsViewGroup"-->
-<!--                        layout="@layout/tags_view_group"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginHorizontal="10dp"-->
-<!--                        android:layout_marginVertical="10dp"-->
-<!--                        app:IOnClick="@{viewModel.onClickListenerTag}" />-->
+                    <include
+                        android:id="@+id/tagsViewGroup"
+                        layout="@layout/tags_view_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="10dp"
+                        app:IOnClick="@{viewModel.onClickListenerTag}" />
 
                     <LinearLayout
                         android:layout_width="match_parent"

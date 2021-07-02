@@ -17,6 +17,12 @@ public class SearchData {
         this.page = page;
     }
 
+    public void nextPage() {
+        int pageNext = Integer.parseInt(this.page);
+        pageNext++;
+        this.page = Integer.toString(pageNext);
+    }
+
     public String getSearchTerm() {
         return searchTerm;
     }

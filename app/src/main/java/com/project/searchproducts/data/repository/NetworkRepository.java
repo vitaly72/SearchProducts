@@ -6,6 +6,7 @@ import com.project.searchproducts.domain.repository.INetworkRepository;
 
 import javax.inject.Inject;
 
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class NetworkRepository implements INetworkRepository {
@@ -16,7 +17,7 @@ public class NetworkRepository implements INetworkRepository {
         this.networkApi = networkApi;
     }
 
-    public Single<String> searchProducts(SearchData searchData) {
+    public Observable<String> searchProducts(SearchData searchData) {
         return networkApi.search(searchData.getSearchTerm(),
                 searchData.getMinPrice(),
                 searchData.getMaxPrice(),
@@ -24,13 +25,13 @@ public class NetworkRepository implements INetworkRepository {
                 searchData.getPage());
     }
 
-    public Single<String> searchProductByTag(String tag) {
+    public Observable<String> searchProductByTag(String tag) {
         String tagLink = tag.replace("/ua/", "");
 
         return networkApi.searchByTag(tagLink);
     }
 
-    public Single<String> detailsProduct(String productId) {
+    public Observable<String> detailsProduct(String productId) {
         String product = productId.replace("/ua/", "").split("\\?token")[0];
 
         return networkApi.details(product);

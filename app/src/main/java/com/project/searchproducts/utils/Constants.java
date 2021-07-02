@@ -22,7 +22,7 @@ public final class Constants {
     }
 
     public static final class CLASSES {
-        public static final String IMAGES = "lazyImage__image--APkHl";
+        public static final String IMAGES = "ek-picture__item";
         public static final String DESCRIPTIONS = "descriptions";
     }
 }

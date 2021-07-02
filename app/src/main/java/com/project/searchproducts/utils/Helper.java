@@ -1,11 +1,9 @@
 package com.project.searchproducts.utils;
 
-import android.content.res.Resources;
 import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.project.searchproducts.R;
-import com.project.searchproducts.models.Product;
+import com.project.searchproducts.domain.models.Product;
 
 import java.util.ArrayList;
 import java.util.Collections;

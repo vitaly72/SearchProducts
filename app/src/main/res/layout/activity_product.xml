@@ -7,14 +7,14 @@
 
         <variable
             name="product"
-            type="com.project.searchproducts.models.Product" />
+            type="com.project.searchproducts.domain.models.Product" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/green"
-        tools:context=".screens.DetailsActivity">
+        tools:context=".presentation.details.DetailsActivity">
 
         <ScrollView
             android:layout_width="match_parent"

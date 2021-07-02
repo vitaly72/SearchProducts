@@ -7,7 +7,7 @@
 
         <variable
             name="product"
-            type="com.project.searchproducts.models.ProductFavorite" />
+            type="com.project.searchproducts.domain.models.ProductFavorite" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

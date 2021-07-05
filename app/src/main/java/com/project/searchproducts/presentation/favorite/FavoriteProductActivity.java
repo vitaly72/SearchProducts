@@ -94,10 +94,9 @@ public class FavoriteProductActivity extends AppCompatActivity implements
             if (!isConnected) {
                 makeSnackBar(view);
             } else {
-                System.out.println("FavoriteProductActivity.onClick");
                 Intent intent = new Intent(FavoriteProductActivity.this, DetailsActivity.class);
-                String movieJsonString = JSONUtils.getGsonParser().toJson(product);
-                intent.putExtra(Constants.INTENT_KEY, movieJsonString);
+                String productJsonString = JSONUtils.getGsonParser().toJson(product);
+                intent.putExtra(Constants.INTENT_KEY, productJsonString);
                 startActivity(intent);
             }
         }));

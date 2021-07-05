@@ -60,7 +60,6 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     private List<SeoLinks> seoLinks;
     private SortType sortType = SortType.SCORE;
     private SearchData searchData = null;
-    private int page = 1;
     private List<Double> priceRange = new ArrayList<>();
 
     @SuppressLint({"ResourceAsColor", "SetJavaScriptEnabled"})
@@ -172,9 +171,8 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     private void loadNextPage(SearchData searchData) {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
         searchData.nextPage();
-        searchData.setPage(Integer.toString(page));
-        productsViewModel.search(searchData);
 
+        productsViewModel.search(searchData);
         productsViewModel.getProductsData().observe(this, products -> {
             searchBinding.progressIndicator.setVisibility(View.GONE);
 
@@ -186,8 +184,8 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     private void loadWithFilters(SearchData searchData) {
         if (searchData.getSearchTerm().equals("")) return;
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
-        productsViewModel.search(searchData);
 
+        productsViewModel.search(searchData);
         productsViewModel.getProductsData().observe(this, products -> {
             searchBinding.backgroundImageView.setVisibility(View.GONE);
             searchBinding.progressIndicator.setVisibility(View.GONE);
@@ -212,15 +210,9 @@ public class SearchActivity extends AppCompatActivity implements IOnClickListene
     @Override
     public void OnClickTag(int id) {
         searchBinding.progressIndicator.setVisibility(View.VISIBLE);
-        searchBinding.mainScrollView.setVisibility(View.GONE);
 
         productsViewModel.searchByTag(seoLinks.get(id).getLink());
-        productAdapter.clear();
-        seoLinks.clear();
-
         productsViewModel.getProductsData().observe(this, products -> {
-            searchBinding.progressIndicator.setVisibility(View.GONE);
-            searchBinding.mainScrollView.setVisibility(View.VISIBLE);
 
             productAdapter.setProducts(products);
         });
